@@ -10,7 +10,8 @@ export async function convertDocumentsBackend(
 
   formData.append('target_format', targetFormat)
 
-  const response = await fetch('/api/convert', {
+  const baseUrl = import.meta.env.VITE_API_URL || ''
+  const response = await fetch(`${baseUrl}/api/convert`, {
     method: 'POST',
     body: formData,
   })

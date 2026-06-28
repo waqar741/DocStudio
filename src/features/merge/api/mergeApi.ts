@@ -24,7 +24,8 @@ export async function mergeDocumentsBackend(
   formData.append('document_type', naming.documentType || 'Merged')
   formData.append('suffix', naming.suffix || '')
 
-  const response = await fetch('/api/merge', {
+  const baseUrl = import.meta.env.VITE_API_URL || ''
+  const response = await fetch(`${baseUrl}/api/merge`, {
     method: 'POST',
     body: formData,
   })

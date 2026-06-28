@@ -35,7 +35,8 @@ export async function processImageBackend(
   formData.append('document_type', selectedType)
   formData.append('suffix', namingSettings.suffix)
 
-  const response = await fetch('/api/process-image', {
+  const baseUrl = import.meta.env.VITE_API_URL || ''
+  const response = await fetch(`${baseUrl}/api/process-image`, {
     method: 'POST',
     body: formData,
   })
