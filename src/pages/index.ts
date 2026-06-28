@@ -1,0 +1,8 @@
+export { DashboardPage } from './DashboardPage'
+export { ImagePage } from './ImagePage'
+export { PdfPage } from './PdfPage'
+export { MergePage } from './MergePage'
+export { ConverterPage } from './ConverterPage'
+export { SettingsPage } from './SettingsPage'
+export { NotFoundPage } from './NotFoundPage'
+export { ComponentsPage } from './ComponentsPage'
