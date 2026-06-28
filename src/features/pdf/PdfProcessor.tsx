@@ -133,7 +133,7 @@ export function PdfProcessor() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-56px)] w-full overflow-hidden bg-[var(--surface-secondary)]">
+    <div className="flex flex-1 w-full min-h-0 overflow-hidden bg-[var(--surface-secondary)]">
       <LeftSidebar activeTool={activeTool} onToolSelect={handleToolSelect} />
       
       <UnifiedWorkspace

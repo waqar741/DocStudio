@@ -4,7 +4,7 @@ export async function compressPdf(file: File, level: string, filename: string): 
   formData.append('level', level)
   formData.append('filename', filename)
 
-  const res = await fetch('http://localhost:8000/api/pdf/compress', {
+  const res = await fetch('/api/pdf/compress', {
     method: 'POST',
     body: formData,
   })
@@ -19,7 +19,7 @@ export async function splitPdf(file: File, splitType: string, ranges: string, or
   formData.append('ranges', ranges)
   formData.append('original_name', originalName)
 
-  const res = await fetch('http://localhost:8000/api/pdf/split', {
+  const res = await fetch('/api/pdf/split', {
     method: 'POST',
     body: formData,
   })
@@ -39,7 +39,7 @@ export async function rotatePdf(file: File, rotations: Record<number, number>, f
   formData.append('rotations_json', JSON.stringify(rotations))
   formData.append('filename', filename)
 
-  const res = await fetch('http://localhost:8000/api/pdf/rotate', {
+  const res = await fetch('/api/pdf/rotate', {
     method: 'POST',
     body: formData,
   })
@@ -53,7 +53,7 @@ export async function rearrangePdf(file: File, order: number[], filename: string
   formData.append('order_json', JSON.stringify(order))
   formData.append('filename', filename)
 
-  const res = await fetch('http://localhost:8000/api/pdf/rearrange', {
+  const res = await fetch('/api/pdf/rearrange', {
     method: 'POST',
     body: formData,
   })
@@ -67,7 +67,7 @@ export async function deletePages(file: File, toDelete: number[], filename: stri
   formData.append('delete_json', JSON.stringify(toDelete))
   formData.append('filename', filename)
 
-  const res = await fetch('http://localhost:8000/api/pdf/delete-pages', {
+  const res = await fetch('/api/pdf/delete-pages', {
     method: 'POST',
     body: formData,
   })
@@ -81,7 +81,7 @@ export async function extractPages(file: File, ranges: string, originalName: str
   formData.append('ranges', ranges)
   formData.append('original_name', originalName)
 
-  const res = await fetch('http://localhost:8000/api/pdf/extract-pages', {
+  const res = await fetch('/api/pdf/extract-pages', {
     method: 'POST',
     body: formData,
   })
@@ -102,7 +102,7 @@ export async function addBlankPage(file: File, position: number, size: string, f
   formData.append('size', size)
   formData.append('filename', filename)
 
-  const res = await fetch('http://localhost:8000/api/pdf/add-blank-page', {
+  const res = await fetch('/api/pdf/add-blank-page', {
     method: 'POST',
     body: formData,
   })

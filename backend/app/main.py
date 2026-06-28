@@ -8,6 +8,8 @@ from .services.pdf_service import (
     compress_pdf, split_pdf, rotate_pages, rearrange_pages,
     delete_pages, add_blank_page
 )
+from .services.merge_service import merge_documents
+from .services.convert_service import convert_documents
 from .utils.naming import generate_filename
 
 app = FastAPI(title="DocStudio Image API")
@@ -236,6 +238,78 @@ async def api_add_blank_page(
         return Response(
             content=processed,
             media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"',
+                "Access-Control-Expose-Headers": "Content-Disposition"
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==========================================
+# MERGE ENDPOINTS
+# ==========================================
+
+from typing import List
+
+@app.post("/api/merge")
+async def api_merge_documents(
+    files: List[UploadFile] = File(...),
+    # Settings
+    page_size: str = Form("A4"),
+    orientation: str = Form("portrait"),
+    margin: str = Form("none"),
+    # Naming
+    relationship: str = Form("Self"),
+    document_type: str = Form("Document"),
+    suffix: str = Form(""),
+    # Output Format
+    output_format: str = Form("pdf"),
+    image_layout: str = Form("vertical"),
+):
+    try:
+        ext = "jpg" if output_format == "image" else "pdf"
+        filename = generate_filename(relationship, document_type, suffix, ext)
+        
+        processed_bytes, mime_type = await merge_documents(
+            files=files,
+            page_size=page_size,
+            orientation=orientation,
+            margin=margin,
+            output_format=output_format,
+            image_layout=image_layout
+        )
+
+        return Response(
+            content=processed_bytes,
+            media_type=mime_type,
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"',
+                "Access-Control-Expose-Headers": "Content-Disposition"
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==========================================
+# CONVERT ENDPOINTS
+# ==========================================
+
+@app.post("/api/convert")
+async def api_convert_documents(
+    files: List[UploadFile] = File(...),
+    target_format: str = Form(...)
+):
+    try:
+        processed_bytes, mime_type, filename = await convert_documents(
+            files=files,
+            target_format=target_format
+        )
+
+        return Response(
+            content=processed_bytes,
+            media_type=mime_type,
             headers={
                 "Content-Disposition": f'attachment; filename="{filename}"',
                 "Access-Control-Expose-Headers": "Content-Disposition"

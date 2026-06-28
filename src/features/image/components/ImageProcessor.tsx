@@ -87,6 +87,16 @@ export function ImageProcessor() {
     setPixelCrop(null)
   }
 
+  const handleBack = () => {
+    if (step === 2) {
+      handleStartNew()
+    } else if (step === 3) {
+      handleFileReplace()
+    } else if (step === 4) {
+      setStep(3)
+    }
+  }
+
   // Memoize dependencies for Live Preview
   const processDependencies = useMemo(() => ({
     file,
@@ -166,7 +176,7 @@ export function ImageProcessor() {
   }
 
   return (
-    <div className="flex w-full h-[calc(100vh-56px)] bg-[var(--surface-primary)] overflow-hidden">
+    <div className="flex flex-1 w-full min-h-0 bg-[var(--surface-primary)] overflow-hidden">
       <UnifiedImageWorkspace 
         file={file}
         step={step}
@@ -189,6 +199,7 @@ export function ImageProcessor() {
         onProceedToReview={handleProceedToReview}
         onDownload={handleDownload}
         onStartNew={handleStartNew}
+        onBack={handleBack}
       />
     </div>
   )

@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, type Dispatch, type SetStateAction } from 'react'
 import { UploadZone, Button } from '@/components/ui'
 import { Download, Loader2, ArrowRight, FileImage, PlusCircle, CreditCard, User, FileText, Camera } from 'lucide-react'
 import { CropWorkspace } from './editor/CropWorkspace'
@@ -26,9 +26,9 @@ export interface UnifiedImageWorkspaceProps {
   
   selectedType: string | null
   outputSettings: OutputSettings
-  setOutputSettings: React.Dispatch<React.SetStateAction<OutputSettings>>
+  setOutputSettings: Dispatch<SetStateAction<OutputSettings>>
   namingSettings: NamingSettings
-  setNamingSettings: React.Dispatch<React.SetStateAction<NamingSettings>>
+  setNamingSettings: Dispatch<SetStateAction<NamingSettings>>
   setPixelCrop: (crop: Area) => void
 
   onTypeSelect: (type: string) => void
@@ -37,6 +37,7 @@ export interface UnifiedImageWorkspaceProps {
   onProceedToReview: () => void
   onDownload: () => void
   onStartNew: () => void
+  onBack: () => void
 }
 
 export function UnifiedImageWorkspace({
@@ -57,7 +58,8 @@ export function UnifiedImageWorkspace({
   onFileReplace,
   onProceedToReview,
   onDownload,
-  onStartNew
+  onStartNew,
+  onBack
 }: UnifiedImageWorkspaceProps) {
   
   const formatSize = (bytes: number) => (bytes / 1024).toFixed(1) + ' KB'
@@ -67,17 +69,33 @@ export function UnifiedImageWorkspace({
     <div className="flex-1 flex flex-col h-full bg-[#f8f9fa] dark:bg-[#111] overflow-hidden relative">
       
       {/* Universal Step Indicator Header */}
-      <div className="shrink-0 bg-white/80 dark:bg-[#1a1a1a]/80 backdrop-blur-md border-b border-[var(--border-secondary)] px-6 py-2.5 flex items-center justify-between">
-        <h2 className="font-bold text-lg text-[var(--text-primary)]">Image Processor</h2>
-        <div className="flex items-center gap-2 text-sm font-semibold">
-          <span className={`px-3 py-1 rounded-full ${step >= 1 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}>1. Document</span>
-          <ArrowRight size={14} className="text-gray-400" />
-          <span className={`px-3 py-1 rounded-full ${step >= 2 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}>2. Upload</span>
-          <ArrowRight size={14} className="text-gray-400" />
-          <span className={`px-3 py-1 rounded-full ${step >= 3 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}>3. Edit</span>
-          <ArrowRight size={14} className="text-gray-400" />
-          <span className={`px-3 py-1 rounded-full ${step >= 4 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}>4. Review</span>
+      <div className="shrink-0 bg-white/80 dark:bg-[#1a1a1a]/80 backdrop-blur-md border-b border-[var(--border-secondary)] px-6 py-2.5 grid grid-cols-3 items-center">
+        
+        {/* Left: Back Button */}
+        <div className="flex justify-start">
+          {step > 1 && (
+            <button 
+              onClick={onBack}
+              className="flex items-center gap-1.5 text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors px-3 py-1.5 rounded-lg hover:bg-[var(--surface-hover)]"
+            >
+              <ArrowRight size={16} className="rotate-180" /> Back
+            </button>
+          )}
         </div>
+
+        {/* Center: Stepper */}
+        <div className="flex justify-center items-center gap-2 text-sm font-semibold">
+          <span className={`px-3 py-1 rounded-full whitespace-nowrap ${step >= 1 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}>1. Document</span>
+          <ArrowRight size={14} className="text-gray-400 shrink-0" />
+          <span className={`px-3 py-1 rounded-full whitespace-nowrap ${step >= 2 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}>2. Upload</span>
+          <ArrowRight size={14} className="text-gray-400 shrink-0" />
+          <span className={`px-3 py-1 rounded-full whitespace-nowrap ${step >= 3 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}>3. Edit</span>
+          <ArrowRight size={14} className="text-gray-400 shrink-0" />
+          <span className={`px-3 py-1 rounded-full whitespace-nowrap ${step >= 4 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}>4. Review</span>
+        </div>
+
+        {/* Right: Empty for balance */}
+        <div></div>
       </div>
 
       <div className={`mx-auto w-full flex flex-col flex-1 min-h-0 ${step === 3 ? 'p-4 md:p-6 max-w-[1920px]' : 'p-6 md:p-8 max-w-5xl overflow-y-auto custom-scrollbar'}`}>

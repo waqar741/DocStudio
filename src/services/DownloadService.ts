@@ -13,9 +13,25 @@ export class DownloadService {
     // This bypasses iframe sandbox limitations on the 'download' attribute
     if ('showSaveFilePicker' in window) {
       try {
-        const opts = {
+        const extension = filename.split('.').pop()?.toLowerCase() || ''
+        let types: any[] = []
+        if (extension === 'jpg' || extension === 'jpeg') {
+          types = [{ description: 'JPEG Image', accept: { 'image/jpeg': ['.jpg', '.jpeg'] } }]
+        } else if (extension === 'png') {
+          types = [{ description: 'PNG Image', accept: { 'image/png': ['.png'] } }]
+        } else if (extension === 'webp') {
+          types = [{ description: 'WebP Image', accept: { 'image/webp': ['.webp'] } }]
+        } else if (extension === 'pdf') {
+          types = [{ description: 'PDF Document', accept: { 'application/pdf': ['.pdf'] } }]
+        }
+
+        const opts: any = {
           suggestedName: filename,
         }
+        if (types.length > 0) {
+          opts.types = types
+        }
+        
         const handle = await (window as any).showSaveFilePicker(opts)
         const writable = await handle.createWritable()
         await writable.write(blob)
