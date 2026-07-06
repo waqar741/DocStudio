@@ -114,6 +114,11 @@ export function ImageProcessor() {
       return
     }
 
+    // Don't send request if crop is cleared (0x0 area) - wait for user to draw new crop
+    if (pixelCrop && pixelCrop.width === 0 && pixelCrop.height === 0) {
+      return
+    }
+
     const currentCropArea = pixelCrop || { x: 0, y: 0, width: 0, height: 0 }
 
     if (isLive) setIsLiveUpdating(true)
