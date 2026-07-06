@@ -89,26 +89,26 @@ export function CropWorkspace({
       </div>
 
       {/* Toolbar */}
-      <div className="h-12 bg-[#252526] border-t border-[#3e3e42] flex items-center justify-between px-4 shrink-0">
+      <div className="h-14 md:h-12 bg-[#252526] border-t border-[#3e3e42] flex items-center justify-between px-4 shrink-0">
         
         <div className="flex items-center gap-1">
           <Button 
             variant="ghost" 
             size="sm"
             onClick={() => handleZoom(-0.1)}
-            className="text-slate-300 hover:text-white hover:bg-white/10 px-2 h-8"
+            className="text-slate-300 hover:text-white hover:bg-white/10 px-3 w-11 h-11 md:w-auto md:px-2 md:h-8"
             title="Zoom Out"
           >
-            <ZoomOut className="w-4 h-4" />
+            <ZoomOut className="w-5 h-5 md:w-4 md:h-4" />
           </Button>
           <Button 
             variant="ghost" 
             size="sm"
             onClick={() => handleZoom(0.1)}
-            className="text-slate-300 hover:text-white hover:bg-white/10 px-2 h-8"
+            className="text-slate-300 hover:text-white hover:bg-white/10 px-3 w-11 h-11 md:w-auto md:px-2 md:h-8"
             title="Zoom In"
           >
-            <ZoomIn className="w-4 h-4" />
+            <ZoomIn className="w-5 h-5 md:w-4 md:h-4" />
           </Button>
           
           <div className="w-px h-4 bg-slate-700 mx-1"></div>
@@ -117,10 +117,10 @@ export function CropWorkspace({
             variant="ghost" 
             size="sm"
             onClick={() => setDragMode('move')}
-            className="text-slate-300 hover:text-white hover:bg-white/10 px-2 h-8"
+            className="text-slate-300 hover:text-white hover:bg-white/10 px-3 w-11 h-11 md:w-auto md:px-2 md:h-8"
             title="Pan Mode"
           >
-            <Move className="w-4 h-4" />
+            <Move className="w-5 h-5 md:w-4 md:h-4" />
           </Button>
         </div>
         
@@ -129,8 +129,8 @@ export function CropWorkspace({
             variant="ghost" 
             size="sm"
             onClick={handleRotate}
-            leftIcon={<RotateCw className="w-3 h-3" />}
-            className="text-slate-300 hover:text-white hover:bg-white/10 text-xs px-2 h-8"
+            leftIcon={<RotateCw className="w-4 h-4 md:w-3 md:h-3" />}
+            className="text-slate-300 hover:text-white hover:bg-white/10 text-sm md:text-xs px-3 h-11 md:px-2 md:h-8"
           >
             Rotate
           </Button>
@@ -138,8 +138,8 @@ export function CropWorkspace({
             variant="ghost" 
             size="sm"
             onClick={handleReset}
-            leftIcon={<RefreshCw className="w-3 h-3" />}
-            className="text-slate-300 hover:text-white hover:bg-white/10 text-xs px-2 h-8"
+            leftIcon={<RefreshCw className="w-4 h-4 md:w-3 md:h-3" />}
+            className="text-slate-300 hover:text-white hover:bg-white/10 text-sm md:text-xs px-3 h-11 md:px-2 md:h-8"
           >
             Reset
           </Button>

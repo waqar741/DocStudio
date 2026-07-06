@@ -60,7 +60,7 @@ export function Sidebar() {
 
           {/* Mobile close */}
           <button
-            className="rounded-md p-1.5 lg:hidden"
+            className="rounded-md p-2.5 md:p-1.5 lg:hidden"
             style={{ color: 'var(--text-secondary)' }}
             onClick={() => setSidebarMobileOpen(false)}
             aria-label="Close navigation"
@@ -93,7 +93,7 @@ export function Sidebar() {
               end={item.path === '/'}
               onClick={() => setSidebarMobileOpen(false)}
               className={({ isActive }) =>
-                `group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                `group flex items-center gap-3 rounded-lg px-3 py-3 md:py-2.5 text-sm font-medium transition-colors ${
                   sidebarCollapsed ? 'justify-center' : ''
                 } ${
                   isActive

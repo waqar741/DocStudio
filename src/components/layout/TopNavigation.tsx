@@ -46,7 +46,7 @@ export function TopNavigation() {
     >
       {/* Mobile menu trigger */}
       <button
-        className="rounded-md p-2 transition-colors hover:bg-[var(--surface-hover)] lg:hidden"
+        className="rounded-md p-2.5 md:p-2 transition-colors hover:bg-[var(--surface-hover)] lg:hidden"
         style={{ color: 'var(--text-secondary)' }}
         onClick={() => setSidebarMobileOpen(true)}
         aria-label="Open navigation menu"
@@ -67,7 +67,7 @@ export function TopNavigation() {
 
       {/* Theme toggle */}
       <button
-        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[var(--surface-hover)]"
+        className="flex items-center gap-2 rounded-lg px-3 py-2.5 md:py-2 text-sm font-medium transition-colors hover:bg-[var(--surface-hover)]"
         style={{ color: 'var(--text-secondary)' }}
         onClick={cycleTheme}
         aria-label={`Theme: ${mode}. Click to change.`}

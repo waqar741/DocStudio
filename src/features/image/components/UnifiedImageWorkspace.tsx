@@ -111,8 +111,8 @@ export function UnifiedImageWorkspace({
         {/* Step 2: Configure & Crop (3 Pane Layout) */}
         {step === 2 && file && (
           <>
-            <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-4 animate-in fade-in duration-500 lg:hidden custom-scrollbar">
-              <div className="relative overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
+            <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto pb-6 animate-in fade-in duration-500 lg:hidden custom-scrollbar">
+              <div className="relative shrink-0 overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
                 <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">Naming</h3>
                 <div className="space-y-4">
                   <div>
@@ -131,10 +131,10 @@ export function UnifiedImageWorkspace({
                     <select
                       value={namingSettings.documentType}
                       onChange={(e) => setNamingSettings(s => ({ ...s, documentType: e.target.value }))}
-                      className="h-11 w-full rounded-md border border-[var(--border-secondary)] bg-[var(--surface-primary)] px-3 text-sm text-[var(--text-primary)]"
+                      className="h-11 w-full rounded-md border border-[var(--border-secondary)] bg-[var(--surface-primary)] px-3 text-sm text-[var(--text-primary)] dark:[color-scheme:dark]"
                     >
                       {DOCUMENT_TYPE_OPTIONS.map((option) => (
-                        <option key={option.value} value={option.value}>
+                        <option key={option.value} value={option.value} className="bg-[var(--surface-primary)] text-[var(--text-primary)]">
                           {option.label}
                         </option>
                       ))}
@@ -143,7 +143,7 @@ export function UnifiedImageWorkspace({
                 </div>
               </div>
 
-              <div className="overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
+              <div className="shrink-0 overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
                 <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">Output Format</h3>
                 <div className="grid grid-cols-3 gap-2">
                   {['jpg', 'png', 'webp'].map(fmt => (
@@ -162,22 +162,22 @@ export function UnifiedImageWorkspace({
                 </div>
               </div>
 
-              <div className="overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
+              <div className="shrink-0 overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
                 <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">Resolution</h3>
                 <select
                   value={outputSettings.resolution}
                   onChange={(e) => setOutputSettings(s => ({ ...s, resolution: e.target.value }))}
-                  className="h-11 w-full rounded-md border border-[var(--border-secondary)] bg-[var(--surface-primary)] px-3 text-sm text-[var(--text-primary)]"
+                  className="h-11 w-full rounded-md border border-[var(--border-secondary)] bg-[var(--surface-primary)] px-3 text-sm text-[var(--text-primary)] dark:[color-scheme:dark]"
                 >
-                  <option value="original">Original</option>
-                  <option value="160x200">160 × 200</option>
-                  <option value="256x64">256 × 64 (Signature)</option>
-                  <option value="276x354">276 × 354 (Passport Photo)</option>
-                  <option value="300x300">300 × 300</option>
-                  <option value="300x400">300 × 400</option>
-                  <option value="600x600">600 × 600</option>
-                  <option value="1200x1200">1200 × 1200</option>
-                  <option value="custom">Custom Size</option>
+                  <option value="original" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Original</option>
+                  <option value="160x200" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">160 × 200</option>
+                  <option value="256x64" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">256 × 64 (Signature)</option>
+                  <option value="276x354" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">276 × 354 (Passport Photo)</option>
+                  <option value="300x300" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">300 × 300</option>
+                  <option value="300x400" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">300 × 400</option>
+                  <option value="600x600" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">600 × 600</option>
+                  <option value="1200x1200" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">1200 × 1200</option>
+                  <option value="custom" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Custom Size</option>
                 </select>
                 {outputSettings.resolution === 'custom' && (
                   <div className="mt-3 grid grid-cols-2 gap-2">
@@ -199,20 +199,20 @@ export function UnifiedImageWorkspace({
                 )}
               </div>
 
-              <div className="overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
+              <div className="shrink-0 overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
                 <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">Target File Size</h3>
                 <select
                   value={outputSettings.targetKB}
                   onChange={(e) => setOutputSettings(s => ({ ...s, targetKB: e.target.value }))}
-                  className="h-11 w-full rounded-md border border-[var(--border-secondary)] bg-[var(--surface-primary)] px-3 text-sm text-[var(--text-primary)]"
+                  className="h-11 w-full rounded-md border border-[var(--border-secondary)] bg-[var(--surface-primary)] px-3 text-sm text-[var(--text-primary)] dark:[color-scheme:dark]"
                 >
-                  <option value="none">No Limit</option>
-                  <option value="19">Under 19 KB</option>
-                  <option value="20">Under 20 KB</option>
-                  <option value="50">Under 50 KB</option>
-                  <option value="100">Under 100 KB</option>
-                  <option value="200">Under 200 KB</option>
-                  <option value="custom">Custom Size</option>
+                  <option value="none" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">No Limit</option>
+                  <option value="19" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 19 KB</option>
+                  <option value="20" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 20 KB</option>
+                  <option value="50" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 50 KB</option>
+                  <option value="100" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 100 KB</option>
+                  <option value="200" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 200 KB</option>
+                  <option value="custom" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Custom Size</option>
                 </select>
                 {outputSettings.targetKB === 'custom' && (
                   <input
@@ -225,11 +225,11 @@ export function UnifiedImageWorkspace({
                 )}
               </div>
 
-              <div className="overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] shadow-sm">
+              <div className="shrink-0 flex flex-col min-h-[50vh] sm:min-h-[500px] overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] shadow-sm">
                 <CropWorkspace file={file} setPixelCrop={setPixelCrop} />
               </div>
 
-              <div className="overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
+              <div className="shrink-0 overflow-hidden rounded-xl border border-[var(--border-secondary)] bg-[var(--surface-primary)] p-4 shadow-sm">
                 <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">Live Preview</h3>
                 {isLiveUpdating && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--surface-primary)]/60 backdrop-blur-[1px]">
@@ -245,7 +245,7 @@ export function UnifiedImageWorkspace({
                 </div>
 
                 <div className="space-y-3 text-xs">
-                  <div className="rounded-lg border border-[var(--color-primary-100)] bg-[var(--color-primary-50)] p-2.5 dark:border-[var(--color-primary-800)] dark:bg-[var(--color-primary-900)]/30">
+                  <div className="rounded-lg border border-[var(--border-secondary)] bg-[var(--surface-secondary)] p-2.5">
                     <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400">Filename</p>
                     <p className="break-all font-mono leading-tight text-[var(--text-primary)]">{generatedFilename || '...'}</p>
                   </div>
@@ -325,17 +325,17 @@ export function UnifiedImageWorkspace({
                 <select 
                   value={outputSettings.resolution}
                   onChange={(e) => setOutputSettings(s => ({ ...s, resolution: e.target.value }))}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent font-medium text-sm mb-2"
+                  className="w-full p-2 border border-[var(--border-secondary)] bg-[var(--surface-primary)] rounded-lg text-[var(--text-primary)] font-medium text-sm mb-2 dark:[color-scheme:dark]"
                 >
-                  <option value="original">Original</option>
-                  <option value="160x200">160 × 200</option>
-                  <option value="256x64">256 × 64 (Signature)</option>
-                  <option value="276x354">276 × 354 (Passport Photo)</option>
-                  <option value="300x300">300 × 300</option>
-                  <option value="300x400">300 × 400</option>
-                  <option value="600x600">600 × 600</option>
-                  <option value="1200x1200">1200 × 1200</option>
-                  <option value="custom">Custom Size</option>
+                  <option value="original" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Original</option>
+                  <option value="160x200" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">160 × 200</option>
+                  <option value="256x64" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">256 × 64 (Signature)</option>
+                  <option value="276x354" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">276 × 354 (Passport Photo)</option>
+                  <option value="300x300" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">300 × 300</option>
+                  <option value="300x400" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">300 × 400</option>
+                  <option value="600x600" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">600 × 600</option>
+                  <option value="1200x1200" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">1200 × 1200</option>
+                  <option value="custom" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Custom Size</option>
                 </select>
                 {outputSettings.resolution === 'custom' && (
                   <div className="flex gap-2">
@@ -362,15 +362,15 @@ export function UnifiedImageWorkspace({
                 <select 
                   value={outputSettings.targetKB}
                   onChange={(e) => setOutputSettings(s => ({ ...s, targetKB: e.target.value }))}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent font-medium text-sm"
+                  className="w-full p-2 border border-[var(--border-secondary)] bg-[var(--surface-primary)] rounded-lg text-[var(--text-primary)] font-medium text-sm dark:[color-scheme:dark]"
                 >
-                  <option value="none">No Limit</option>
-                  <option value="19">Under 19 KB</option>
-                  <option value="20">Under 20 KB</option>
-                  <option value="50">Under 50 KB</option>
-                  <option value="100">Under 100 KB</option>
-                  <option value="200">Under 200 KB</option>
-                  <option value="custom">Custom Size</option>
+                  <option value="none" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">No Limit</option>
+                  <option value="19" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 19 KB</option>
+                  <option value="20" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 20 KB</option>
+                  <option value="50" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 50 KB</option>
+                  <option value="100" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 100 KB</option>
+                  <option value="200" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Under 200 KB</option>
+                  <option value="custom" className="bg-[var(--surface-primary)] text-[var(--text-primary)]">Custom Size</option>
                 </select>
                 {outputSettings.targetKB === 'custom' && (
                   <input
@@ -412,7 +412,7 @@ export function UnifiedImageWorkspace({
                 </div>
 
                 <div className="space-y-3 text-xs">
-                  <div className="rounded-lg border border-[var(--color-primary-100)] bg-[var(--color-primary-50)] p-2.5 dark:border-[var(--color-primary-800)] dark:bg-[var(--color-primary-900)]/30">
+                  <div className="rounded-lg border border-[var(--border-secondary)] bg-[var(--surface-secondary)] p-2.5">
                     <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold mb-1 uppercase tracking-wide">Filename</p>
                     <p className="break-all font-mono leading-tight text-[var(--text-primary)]">{generatedFilename || '...'}</p>
                   </div>

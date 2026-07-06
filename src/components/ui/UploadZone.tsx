@@ -109,7 +109,7 @@ export const UploadZone = forwardRef<HTMLDivElement, UploadZoneProps>(
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            'group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 text-center transition-all sm:p-10',
+            'group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 md:p-6 sm:p-10 text-center transition-all',
             disabled && 'cursor-not-allowed opacity-50',
             !disabled && isDragging && 'border-[var(--color-primary-500)] bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-900)]',
             !disabled && !isDragging && !error && 'border-[var(--border-secondary)] bg-[var(--surface-primary)] hover:border-[var(--color-primary-400)] hover:bg-[var(--surface-hover)]',
@@ -132,10 +132,10 @@ export const UploadZone = forwardRef<HTMLDivElement, UploadZoneProps>(
           )}>
             <UploadCloud className="h-6 w-6 sm:h-8 sm:w-8" aria-hidden="true" />
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-[var(--text-primary)]">
+          <h3 className="mb-2 text-lg font-semibold text-[var(--text-primary)] break-words text-balance max-w-full">
             {title}
           </h3>
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-sm text-[var(--text-secondary)] break-words text-balance max-w-full">
             {description}
           </p>
         </div>
