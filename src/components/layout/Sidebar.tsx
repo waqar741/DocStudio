@@ -45,16 +45,21 @@ export function Sidebar() {
         <div className="flex h-16 items-center justify-between px-4">
           <AnimatePresence mode="wait">
             {!sidebarCollapsed && (
-              <motion.span
-                className="text-lg font-semibold tracking-tight"
-                style={{ color: 'var(--text-primary)' }}
+              <motion.div
+                className="flex items-center gap-2.5 overflow-hidden"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.15 }}
               >
-                {APP_CONFIG.NAME}
-              </motion.span>
+                <img src="/favicon.svg" alt="Logo" className="h-7 w-7 shrink-0" />
+                <span
+                  className="text-lg font-semibold tracking-tight whitespace-nowrap"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  {APP_CONFIG.NAME}
+                </span>
+              </motion.div>
             )}
           </AnimatePresence>
 
