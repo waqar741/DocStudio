@@ -71,8 +71,8 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
               'peer absolute inset-0 z-20 h-full w-full cursor-pointer appearance-none bg-transparent focus:outline-none',
               'disabled:cursor-not-allowed',
               // Style the thumb
-              '[&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-[var(--color-primary-500)] [&::-webkit-slider-thumb]:transition-transform',
-              '[&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:border [&::-moz-range-thumb]:border-[var(--color-primary-500)] [&::-moz-range-thumb]:transition-transform',
+              '[&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--surface-primary)] [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-[var(--color-primary-500)] [&::-webkit-slider-thumb]:transition-transform',
+              '[&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[var(--surface-primary)] [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:border [&::-moz-range-thumb]:border-[var(--color-primary-500)] [&::-moz-range-thumb]:transition-transform',
               'focus-visible:[&::-webkit-slider-thumb]:ring-2 focus-visible:[&::-webkit-slider-thumb]:ring-[var(--color-primary-500)] focus-visible:[&::-webkit-slider-thumb]:ring-offset-2',
               'focus-visible:[&::-moz-range-thumb]:ring-2 focus-visible:[&::-moz-range-thumb]:ring-[var(--color-primary-500)] focus-visible:[&::-moz-range-thumb]:ring-offset-2',
             )}

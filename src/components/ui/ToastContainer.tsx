@@ -12,10 +12,10 @@ const icons: Record<NotificationSeverity, React.ElementType> = {
 }
 
 const severityClasses: Record<NotificationSeverity, string> = {
-  success: 'bg-white border-[var(--border-primary)] dark:bg-[var(--surface-primary)]',
-  error: 'bg-white border-[var(--color-danger-500)] dark:bg-[var(--surface-primary)]',
-  warning: 'bg-white border-[var(--color-warning-500)] dark:bg-[var(--surface-primary)]',
-  info: 'bg-white border-[var(--border-primary)] dark:bg-[var(--surface-primary)]',
+  success: 'bg-[var(--surface-primary)] border-[var(--border-primary)]',
+  error: 'bg-[var(--surface-primary)] border-[var(--color-danger-500)]',
+  warning: 'bg-[var(--surface-primary)] border-[var(--color-warning-500)]',
+  info: 'bg-[var(--surface-primary)] border-[var(--border-primary)]',
 }
 
 const iconColorClasses: Record<NotificationSeverity, string> = {
@@ -46,7 +46,7 @@ export function ToastContainer() {
               exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
               className={cn(
-                'pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-lg border p-4 shadow-lg ring-1 ring-black/5 dark:ring-white/5',
+                'pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-lg border p-4 shadow-lg ring-1 ring-[var(--border-primary)]/20',
                 severityClasses[notification.severity]
               )}
               role="status"

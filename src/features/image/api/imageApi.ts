@@ -1,11 +1,26 @@
 import type { Area, OutputSettings, NamingSettings } from '../components/ImageProcessor'
 
+export function buildImageFilename(
+  file: File | null,
+  namingSettings: NamingSettings,
+  format: OutputSettings['format'],
+): string {
+  const baseName = file?.name ? file.name.split('.').slice(0, -1).join('.') : 'image'
+  const customName = namingSettings.filename.trim() || baseName
+  const documentType = namingSettings.documentType.trim()
+  const combined = `${customName}${documentType}`
+    .replace(/[\s\-]+/g, '')
+    .replace(/[^A-Za-z0-9_]/g, '')
+
+  const extension = format === 'jpg' ? 'jpeg' : format
+  return `${combined || 'image'}.${extension}`
+}
+
 export async function processImageBackend(
   file: File,
   cropArea: Area | null,
   outputSettings: OutputSettings,
-  namingSettings: NamingSettings,
-  selectedType: string
+  namingSettings: NamingSettings
 ): Promise<{ blob: Blob; filename: string }> {
   
   const formData = new FormData()
@@ -31,9 +46,11 @@ export async function processImageBackend(
   formData.append('format', outputSettings.format)
 
   // Naming
-  formData.append('relationship', namingSettings.relationship)
-  formData.append('document_type', selectedType)
-  formData.append('suffix', namingSettings.suffix)
+  formData.append('relationship', '')
+  formData.append('document_type', namingSettings.documentType.trim())
+  
+  const baseName = file.name ? file.name.split('.').slice(0, -1).join('.') : 'image'
+  formData.append('suffix', namingSettings.filename || baseName)
 
   const baseUrl = import.meta.env.VITE_API_URL || ''
   const response = await fetch(`${baseUrl}/api/process-image`, {
@@ -47,21 +64,8 @@ export async function processImageBackend(
   }
 
   const blob = await response.blob()
-  
-  // Extract filename from Content-Disposition header
-  let filename = 'processed_image'
-  const disposition = response.headers.get('Content-Disposition')
-  if (disposition && disposition.includes('filename="')) {
-    const match = disposition.match(/filename="?([^"]+)"?/)
-    if (match && match.length === 2 && match[1]) {
-      filename = match[1]
-    }
-  } else if (disposition && disposition.includes('filename=')) {
-      const parts = disposition.split('filename=')
-      if (parts.length > 1 && parts[1]) {
-        filename = parts[1].replace(/"/g, '')
-      }
-  }
+
+  const filename = buildImageFilename(file, namingSettings, outputSettings.format)
 
   return { blob, filename }
 }

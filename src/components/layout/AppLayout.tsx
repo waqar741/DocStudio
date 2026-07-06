@@ -24,7 +24,7 @@ export function AppLayout() {
         <TopNavigation />
 
         <main 
-          className={`flex-1 flex flex-col min-h-0 ${isFullScreenApp ? '' : 'p-4 md:p-6 lg:p-8 overflow-y-auto'}`} 
+          className={`flex-1 flex flex-col min-h-0 ${isFullScreenApp ? 'overflow-y-auto lg:overflow-hidden' : 'p-4 md:p-6 lg:p-8 overflow-y-auto'}`} 
           id="main-content"
         >
           <Outlet />

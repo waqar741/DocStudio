@@ -1,19 +1,17 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Cropper, { type ReactCropperElement } from 'react-cropper'
 import 'cropperjs/dist/cropper.css'
 import { Button } from '@/components/ui'
 import { RotateCw, ZoomIn, ZoomOut, RefreshCw, Move } from 'lucide-react'
-import type { Area, OutputSettings } from '../ImageProcessor'
+import type { Area } from '../ImageProcessor'
 
 export interface CropWorkspaceProps {
   file: File
-  outputSettings: OutputSettings
   setPixelCrop: (crop: Area) => void
 }
 
 export function CropWorkspace({
   file,
-  outputSettings,
   setPixelCrop,
 }: CropWorkspaceProps) {
   const [fileUrl, setFileUrl] = useState<string>('')
@@ -28,20 +26,8 @@ export function CropWorkspace({
     }
   }, [file])
 
-  // Calculate Aspect Ratio based on output resolution
-  const aspectRatio = useMemo(() => {
-    if (outputSettings.resolution === 'custom') {
-      if (outputSettings.customWidth && outputSettings.customHeight) {
-        return outputSettings.customWidth / outputSettings.customHeight
-      }
-    } else if (outputSettings.resolution !== 'original') {
-      const parts = outputSettings.resolution.split('x')
-      if (parts.length === 2) {
-        return Number(parts[0]) / Number(parts[1])
-      }
-    }
-    return NaN // Free crop
-  }, [outputSettings.resolution, outputSettings.customWidth, outputSettings.customHeight])
+  // Always allow free crop so users can cover wide documents
+  const aspectRatio = NaN
 
   // Handle data updates
   const handleCropChange = () => {

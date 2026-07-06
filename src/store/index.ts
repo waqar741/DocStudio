@@ -1,3 +1,4 @@
 export { useThemeStore } from './themeStore'
+export { initializeTheme } from './themeStore'
 export { useUIStore } from './uiStore'
 export { useNotificationStore } from './notificationStore'

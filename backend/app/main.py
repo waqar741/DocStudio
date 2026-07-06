@@ -10,7 +10,7 @@ from .services.pdf_service import (
 )
 from .services.merge_service import merge_documents
 from .services.convert_service import convert_documents
-from .utils.naming import generate_filename
+from .utils.naming import generate_filename, generate_image_filename
 
 app = FastAPI(title="DocStudio Image API")
 
@@ -45,7 +45,7 @@ async def api_process_image(
 ):
     try:
         # Generate final filename
-        filename = generate_filename(relationship, document_type, suffix, format)
+        filename = generate_image_filename(suffix or image.filename.rsplit('.', 1)[0] if image.filename else "image", document_type, format)
 
         # Parse crop
         crop_box = None

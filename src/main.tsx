@@ -3,12 +3,9 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
 
-// Initialize theme before first render to prevent flash
-import { useThemeStore } from '@/store'
-const { mode } = useThemeStore.getState()
-if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-  document.documentElement.classList.add('dark')
-}
+import { initializeTheme } from '@/store/themeStore'
+
+initializeTheme()
 
 const rootElement = document.getElementById('root')
 if (!rootElement) {

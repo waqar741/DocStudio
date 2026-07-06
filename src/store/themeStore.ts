@@ -8,8 +8,26 @@ interface ThemeState {
   setMode: (mode: ThemeMode) => void
 }
 
+function getStoredMode(): ThemeMode | null {
+  if (typeof window === 'undefined') return null
+
+  try {
+    const raw = window.localStorage.getItem('docstudio-theme')
+    if (!raw) return null
+
+    const parsed = JSON.parse(raw) as { state?: { mode?: ThemeMode } }
+    return parsed.state?.mode ?? null
+  } catch {
+    return null
+  }
+}
+
 /** Resolves the effective theme based on mode and system preference */
 function resolveTheme(mode: ThemeMode): 'light' | 'dark' {
+  if (typeof window === 'undefined') {
+    return 'light'
+  }
+
   if (mode === 'system') {
     return window.matchMedia('(prefers-color-scheme: dark)').matches
       ? 'dark'
@@ -21,18 +39,22 @@ function resolveTheme(mode: ThemeMode): 'light' | 'dark' {
 /** Applies the resolved theme to the document */
 function applyTheme(resolved: 'light' | 'dark') {
   const root = document.documentElement
-  if (resolved === 'dark') {
-    root.classList.add('dark')
-  } else {
-    root.classList.remove('dark')
-  }
+  root.classList.toggle('dark', resolved === 'dark')
+  root.style.colorScheme = resolved
+}
+
+export function initializeTheme() {
+  if (typeof window === 'undefined') return
+
+  const storedMode = getStoredMode() ?? 'system'
+  applyTheme(resolveTheme(storedMode))
 }
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      mode: 'system',
-      resolvedTheme: resolveTheme('system'),
+      mode: getStoredMode() ?? 'system',
+      resolvedTheme: resolveTheme(getStoredMode() ?? 'system'),
       setMode: (mode) => {
         const resolved = resolveTheme(mode)
         applyTheme(resolved)

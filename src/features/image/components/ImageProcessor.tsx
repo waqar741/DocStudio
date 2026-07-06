@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { DownloadService } from '../../../services/DownloadService'
-import { processImageBackend } from '../api/imageApi'
+import { buildImageFilename, processImageBackend } from '../api/imageApi'
 import { UnifiedImageWorkspace } from './UnifiedImageWorkspace'
 import { useNotificationStore } from '@/store/notificationStore'
 import { useDebounce } from '../../../hooks/useDebounce'
@@ -17,8 +17,8 @@ export interface OutputSettings {
 }
 
 export interface NamingSettings {
-  relationship: string
-  suffix: string
+  filename: string
+  documentType: string
 }
 
 export interface ProcessingStats {
@@ -29,10 +29,9 @@ export interface ProcessingStats {
 
 export function ImageProcessor() {
   // State Machine
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
+  const [step, setStep] = useState<1 | 2>(1)
   
   // Shared state
-  const [selectedType, setSelectedType] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null)
   
   // Crop state
@@ -46,8 +45,8 @@ export function ImageProcessor() {
   })
 
   const [namingSettings, setNamingSettings] = useState<NamingSettings>({
-    relationship: 'Self',
-    suffix: ''
+    filename: '',
+    documentType: ''
   })
 
   // Processing State
@@ -61,56 +60,36 @@ export function ImageProcessor() {
   const isFirstRender = useRef(true)
 
   // Handlers for Step Transitions
-  const handleTypeSelect = (type: string) => {
-    setSelectedType(type)
-    setStep(2)
-  }
-
   const handleFileUpload = (uploadedFile: File) => {
     setFile(uploadedFile)
-    setStep(3)
+    setStep(2)
   }
 
   const handleFileReplace = () => {
     setFile(null)
-    setStep(2)
-    setProcessedBlob(null)
-    setProcessingStats(null)
-  }
-
-  const handleStartNew = () => {
-    setFile(null)
-    setSelectedType(null)
     setStep(1)
     setProcessedBlob(null)
     setProcessingStats(null)
-    setPixelCrop(null)
   }
 
   const handleBack = () => {
     if (step === 2) {
-      handleStartNew()
-    } else if (step === 3) {
       handleFileReplace()
-    } else if (step === 4) {
-      setStep(3)
     }
   }
 
   // Memoize dependencies for Live Preview
   const processDependencies = useMemo(() => ({
     file,
-    selectedType,
     pixelCrop,
     outputSettings,
-    namingSettings
-  }), [file, selectedType, pixelCrop, outputSettings, namingSettings])
+  }), [file, pixelCrop, outputSettings])
 
   const autoProcessTrigger = useDebounce(processDependencies, 800)
 
   // The actual processing function (used for both live preview and final commit)
   const executeProcessing = async (isLive: boolean = false) => {
-    if (!file || !selectedType) return
+    if (!file) return
     
     const currentCropArea = pixelCrop || { x: 0, y: 0, width: 0, height: 0 }
     
@@ -124,8 +103,7 @@ export function ImageProcessor() {
         file,
         currentCropArea.width > 0 ? currentCropArea : null,
         outputSettings,
-        namingSettings,
-        selectedType
+        namingSettings
       )
       
       setProcessedBlob(blob)
@@ -156,19 +134,16 @@ export function ImageProcessor() {
       return
     }
     
-    if (step === 3 && file && selectedType) {
+    if (step === 2 && file) {
       executeProcessing(true) // trigger live update silently
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoProcessTrigger, step])
 
-  const handleProceedToReview = async () => {
-    // If not processing live currently, maybe do a final fresh process just in case
-    if (!processedBlob) {
-      await executeProcessing(false)
-    }
-    setStep(4)
-  }
+  useEffect(() => {
+    if (!file) return
+    setGeneratedFilename(buildImageFilename(file, namingSettings, outputSettings.format))
+  }, [file, namingSettings, outputSettings.format])
 
   const handleDownload = () => {
     if (!processedBlob || !generatedFilename) return
@@ -186,19 +161,14 @@ export function ImageProcessor() {
         generatedFilename={generatedFilename}
         processingStats={processingStats}
         
-        selectedType={selectedType}
         outputSettings={outputSettings}
         setOutputSettings={setOutputSettings}
         namingSettings={namingSettings}
         setNamingSettings={setNamingSettings}
         setPixelCrop={setPixelCrop}
         
-        onTypeSelect={handleTypeSelect}
         onFileUpload={handleFileUpload}
-        onFileReplace={handleFileReplace}
-        onProceedToReview={handleProceedToReview}
         onDownload={handleDownload}
-        onStartNew={handleStartNew}
         onBack={handleBack}
       />
     </div>
