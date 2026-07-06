@@ -6,8 +6,12 @@ import { APP_CONFIG } from '@/constants'
 import { useUIStore } from '@/store'
 
 export function Sidebar() {
-  const { sidebarCollapsed, sidebarMobileOpen, toggleSidebar, setSidebarMobileOpen } =
-    useUIStore()
+  const {
+    sidebarCollapsed,
+    sidebarMobileOpen,
+    toggleSidebar,
+    setSidebarMobileOpen,
+  } = useUIStore()
 
   return (
     <>
@@ -52,7 +56,11 @@ export function Sidebar() {
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.15 }}
               >
-                <img src="/favicon.svg" alt="Logo" className="h-7 w-7 shrink-0" />
+                <img
+                  src="/favicon.svg"
+                  alt="Logo"
+                  className="h-7 w-7 shrink-0"
+                />
                 <span
                   className="text-lg font-semibold tracking-tight whitespace-nowrap"
                   style={{ color: 'var(--text-primary)' }}
@@ -78,7 +86,9 @@ export function Sidebar() {
             className="hidden rounded-md p-1.5 transition-colors hover:bg-[var(--surface-hover)] lg:flex"
             style={{ color: 'var(--text-secondary)' }}
             onClick={toggleSidebar}
-            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={
+              sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
+            }
           >
             <motion.div
               animate={{ rotate: sidebarCollapsed ? 180 : 0 }}
@@ -109,11 +119,7 @@ export function Sidebar() {
               aria-label={sidebarCollapsed ? item.label : undefined}
               title={sidebarCollapsed ? item.label : undefined}
             >
-              <item.icon
-                size={20}
-                className="shrink-0"
-                aria-hidden="true"
-              />
+              <item.icon size={20} className="shrink-0" aria-hidden="true" />
               <AnimatePresence mode="wait">
                 {!sidebarCollapsed && (
                   <motion.span

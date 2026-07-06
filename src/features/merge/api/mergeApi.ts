@@ -1,9 +1,12 @@
-import type { MergeSettings, MergeNamingSettings } from '../components/MergeProcessor'
+import type {
+  MergeSettings,
+  MergeNamingSettings,
+} from '../components/MergeProcessor'
 
 export async function mergeDocumentsBackend(
   files: File[],
   settings: MergeSettings,
-  naming: MergeNamingSettings
+  naming: MergeNamingSettings,
 ): Promise<{ blob: Blob; filename: string }> {
   const formData = new FormData()
 
@@ -46,10 +49,10 @@ export async function mergeDocumentsBackend(
       filename = match[1]
     }
   } else if (disposition && disposition.includes('filename=')) {
-      const parts = disposition.split('filename=')
-      if (parts.length > 1 && parts[1]) {
-        filename = parts[1].replace(/"/g, '')
-      }
+    const parts = disposition.split('filename=')
+    if (parts.length > 1 && parts[1]) {
+      filename = parts[1].replace(/"/g, '')
+    }
   }
 
   return { blob, filename }

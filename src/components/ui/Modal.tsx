@@ -48,12 +48,12 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
     useEffect(() => {
       if (isOpen) {
         document.body.style.overflow = 'hidden'
-        
+
         const handleKeyDown = (e: KeyboardEvent) => {
           if (e.key === 'Escape') onClose()
         }
         document.addEventListener('keydown', handleKeyDown)
-        
+
         return () => {
           document.body.style.overflow = 'unset'
           document.removeEventListener('keydown', handleKeyDown)
@@ -69,23 +69,23 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
     return createPortal(
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
         {/* Backdrop */}
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
           aria-hidden="true"
           onClick={onClose}
         />
-        
+
         {/* Dialog */}
         <div
           ref={ref}
           role="dialog"
           aria-modal="true"
-          aria-labelledby={title ? "modal-title" : undefined}
-          aria-describedby={description ? "modal-description" : undefined}
+          aria-labelledby={title ? 'modal-title' : undefined}
+          aria-describedby={description ? 'modal-description' : undefined}
           className={cn(
-            "relative flex w-full flex-col overflow-hidden rounded-xl bg-[var(--surface-primary)] shadow-2xl transition-all",
+            'relative flex w-full flex-col overflow-hidden rounded-xl bg-[var(--surface-primary)] shadow-2xl transition-all',
             maxWidthClasses[maxWidth],
-            className
+            className,
           )}
         >
           {/* Header */}
@@ -93,7 +93,10 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
             <div className="flex flex-col gap-1.5 p-6 pb-4">
               <div className="flex items-start justify-between gap-4">
                 {title && (
-                  <h2 id="modal-title" className="text-lg font-semibold text-[var(--text-primary)] leading-none tracking-tight">
+                  <h2
+                    id="modal-title"
+                    className="text-lg font-semibold text-[var(--text-primary)] leading-none tracking-tight"
+                  >
                     {title}
                   </h2>
                 )}
@@ -108,7 +111,10 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
                 )}
               </div>
               {description && (
-                <p id="modal-description" className="text-sm text-[var(--text-secondary)]">
+                <p
+                  id="modal-description"
+                  className="text-sm text-[var(--text-secondary)]"
+                >
                   {description}
                 </p>
               )}
@@ -116,7 +122,12 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
           )}
 
           {/* Content */}
-          <div className={cn("flex-1 overflow-y-auto px-6", (!title && hideCloseButton) ? "pt-6" : "")}>
+          <div
+            className={cn(
+              'flex-1 overflow-y-auto px-6',
+              !title && hideCloseButton ? 'pt-6' : '',
+            )}
+          >
             {children}
           </div>
 
@@ -128,7 +139,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
           )}
         </div>
       </div>,
-      document.body
+      document.body,
     )
   },
 )

@@ -15,7 +15,8 @@ export interface AppNotification {
 }
 
 /** Processing status for async operations */
-export type ProcessingStatus = 'idle' | 'loading' | 'processing' | 'complete' | 'error'
+export type ProcessingStatus =
+  'idle' | 'loading' | 'processing' | 'complete' | 'error'
 
 /** Supported image formats */
 export type ImageFormat = 'jpg' | 'jpeg' | 'png' | 'webp'

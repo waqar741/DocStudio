@@ -16,7 +16,7 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
         ref={ref}
         className={cn(
           'flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border-secondary)] bg-[var(--surface-secondary)] p-8 text-center sm:p-12',
-          className
+          className,
         )}
         {...props}
       >
@@ -25,7 +25,9 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
             {icon}
           </div>
         )}
-        <h3 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
+        <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+          {title}
+        </h3>
         {description && (
           <p className="mt-2 text-sm text-[var(--text-secondary)] max-w-sm mx-auto">
             {description}
@@ -34,7 +36,7 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
         {action && <div className="mt-6">{action}</div>}
       </div>
     )
-  }
+  },
 )
 
 EmptyState.displayName = 'EmptyState'

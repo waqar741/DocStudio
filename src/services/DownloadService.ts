@@ -16,13 +16,27 @@ export class DownloadService {
         const extension = filename.split('.').pop()?.toLowerCase() || ''
         let types: any[] = []
         if (extension === 'jpg' || extension === 'jpeg') {
-          types = [{ description: 'JPEG Image', accept: { 'image/jpeg': ['.jpg', '.jpeg'] } }]
+          types = [
+            {
+              description: 'JPEG Image',
+              accept: { 'image/jpeg': ['.jpg', '.jpeg'] },
+            },
+          ]
         } else if (extension === 'png') {
-          types = [{ description: 'PNG Image', accept: { 'image/png': ['.png'] } }]
+          types = [
+            { description: 'PNG Image', accept: { 'image/png': ['.png'] } },
+          ]
         } else if (extension === 'webp') {
-          types = [{ description: 'WebP Image', accept: { 'image/webp': ['.webp'] } }]
+          types = [
+            { description: 'WebP Image', accept: { 'image/webp': ['.webp'] } },
+          ]
         } else if (extension === 'pdf') {
-          types = [{ description: 'PDF Document', accept: { 'application/pdf': ['.pdf'] } }]
+          types = [
+            {
+              description: 'PDF Document',
+              accept: { 'application/pdf': ['.pdf'] },
+            },
+          ]
         }
 
         const opts: any = {
@@ -31,7 +45,7 @@ export class DownloadService {
         if (types.length > 0) {
           opts.types = types
         }
-        
+
         const handle = await (window as any).showSaveFilePicker(opts)
         const writable = await handle.createWritable()
         await writable.write(blob)
@@ -40,7 +54,10 @@ export class DownloadService {
       } catch (err: any) {
         // If user cancelled, just abort. Otherwise, fallback to the <a> tag method
         if (err.name === 'AbortError') return
-        console.warn('[DownloadService] File System API failed, falling back to <a> tag', err)
+        console.warn(
+          '[DownloadService] File System API failed, falling back to <a> tag',
+          err,
+        )
       }
     }
 

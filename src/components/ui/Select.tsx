@@ -35,20 +35,31 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     },
     ref,
   ) => {
-    const generatedId = id || (label ? `select-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined)
+    const generatedId =
+      id ||
+      (label ? `select-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined)
 
     return (
-      <div className={cn('flex flex-col gap-1.5', fullWidth && 'w-full', className)}>
+      <div
+        className={cn(
+          'flex flex-col gap-1.5',
+          fullWidth && 'w-full',
+          className,
+        )}
+      >
         {label && (
           <label
             htmlFor={generatedId}
             className={cn(
               'text-sm font-medium leading-none text-[var(--text-primary)] peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-              error && 'text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]',
+              error &&
+                'text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]',
             )}
           >
             {label}
-            {required && <span className="ml-1 text-[var(--color-danger-500)]">*</span>}
+            {required && (
+              <span className="ml-1 text-[var(--color-danger-500)]">*</span>
+            )}
           </label>
         )}
         <div className="relative">
@@ -65,12 +76,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             className={cn(
               'flex h-10 w-full appearance-none rounded-md border border-[var(--border-secondary)] bg-[var(--surface-primary)] px-3 py-2 pr-10 text-sm text-[var(--text-primary)] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-500)] focus-visible:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200 cursor-pointer dark:[color-scheme:dark]',
               leftIcon && 'pl-10',
-              error && 'border-[var(--color-danger-500)] focus-visible:ring-[var(--color-danger-500)]',
+              error &&
+                'border-[var(--color-danger-500)] focus-visible:ring-[var(--color-danger-500)]',
             )}
             {...props}
           >
             {options.map((option) => (
-              <option key={option.value} value={option.value} disabled={option.disabled} className="bg-[var(--surface-primary)] text-[var(--text-primary)]">
+              <option
+                key={option.value}
+                value={option.value}
+                disabled={option.disabled}
+                className="bg-[var(--surface-primary)] text-[var(--text-primary)]"
+              >
                 {option.label}
               </option>
             ))}

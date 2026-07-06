@@ -5,7 +5,13 @@ import { UnifiedImageWorkspace } from './UnifiedImageWorkspace'
 import { useNotificationStore } from '@/store/notificationStore'
 import { useDebounce } from '../../../hooks/useDebounce'
 
-export type Area = { x: number; y: number; width: number; height: number; rotate?: number }
+export type Area = {
+  x: number
+  y: number
+  width: number
+  height: number
+  rotate?: number
+}
 
 export interface OutputSettings {
   resolution: string
@@ -30,10 +36,10 @@ export interface ProcessingStats {
 export function ImageProcessor() {
   // State Machine
   const [step, setStep] = useState<1 | 2>(1)
-  
+
   // Shared state
   const [file, setFile] = useState<File | null>(null)
-  
+
   // Crop state
   const [pixelCrop, setPixelCrop] = useState<Area | null>(null)
 
@@ -41,22 +47,23 @@ export function ImageProcessor() {
   const [outputSettings, setOutputSettings] = useState<OutputSettings>({
     resolution: 'original',
     targetKB: 'none',
-    format: 'jpg'
+    format: 'jpg',
   })
 
   const [namingSettings, setNamingSettings] = useState<NamingSettings>({
     filename: '',
-    documentType: ''
+    documentType: '',
   })
 
   // Processing State
   const [isProcessing, setIsProcessing] = useState(false)
   const [processedBlob, setProcessedBlob] = useState<Blob | null>(null)
   const [generatedFilename, setGeneratedFilename] = useState<string>('')
-  const [processingStats, setProcessingStats] = useState<ProcessingStats | null>(null)
+  const [processingStats, setProcessingStats] =
+    useState<ProcessingStats | null>(null)
   const [isLiveUpdating, setIsLiveUpdating] = useState(false)
 
-  const addToast = useNotificationStore(state => state.addNotification)
+  const addToast = useNotificationStore((state) => state.addNotification)
   const isFirstRender = useRef(true)
 
   // Handlers for Step Transitions
@@ -79,42 +86,58 @@ export function ImageProcessor() {
   }
 
   // Memoize dependencies for Live Preview
-  const processDependencies = useMemo(() => ({
-    file,
-    pixelCrop,
-    outputSettings,
-  }), [file, pixelCrop, outputSettings])
+  const processDependencies = useMemo(
+    () => ({
+      file,
+      pixelCrop,
+      outputSettings,
+    }),
+    [file, pixelCrop, outputSettings],
+  )
 
   const autoProcessTrigger = useDebounce(processDependencies, 800)
 
   // The actual processing function (used for both live preview and final commit)
   const executeProcessing = async (isLive: boolean = false) => {
     if (!file) return
-    
+
+    // Don't send request immediately if custom is selected but no values entered
+    if (
+      outputSettings.resolution === 'custom' &&
+      !outputSettings.customWidth &&
+      !outputSettings.customHeight
+    ) {
+      return
+    }
+
+    if (outputSettings.targetKB === 'custom' && !outputSettings.customKB) {
+      return
+    }
+
     const currentCropArea = pixelCrop || { x: 0, y: 0, width: 0, height: 0 }
-    
+
     if (isLive) setIsLiveUpdating(true)
     else setIsProcessing(true)
-    
+
     const startTime = Date.now()
-    
+
     try {
       const { blob, filename } = await processImageBackend(
         file,
         currentCropArea.width > 0 ? currentCropArea : null,
         outputSettings,
-        namingSettings
+        namingSettings,
       )
-      
+
       setProcessedBlob(blob)
       setGeneratedFilename(filename)
-      
+
       setProcessingStats({
         originalSize: file.size,
         finalSize: blob.size,
-        timeMs: Date.now() - startTime
+        timeMs: Date.now() - startTime,
       })
-      
+
       if (!isLive) {
         addToast('Success', 'Image processed successfully!', 'success')
       }
@@ -133,7 +156,7 @@ export function ImageProcessor() {
       isFirstRender.current = false
       return
     }
-    
+
     if (step === 2 && file) {
       executeProcessing(true) // trigger live update silently
     }
@@ -142,7 +165,9 @@ export function ImageProcessor() {
 
   useEffect(() => {
     if (!file) return
-    setGeneratedFilename(buildImageFilename(file, namingSettings, outputSettings.format))
+    setGeneratedFilename(
+      buildImageFilename(file, namingSettings, outputSettings.format),
+    )
   }, [file, namingSettings, outputSettings.format])
 
   const handleDownload = () => {
@@ -152,7 +177,7 @@ export function ImageProcessor() {
 
   return (
     <div className="flex flex-1 w-full min-h-0 bg-[var(--surface-primary)] overflow-hidden">
-      <UnifiedImageWorkspace 
+      <UnifiedImageWorkspace
         file={file}
         step={step}
         isProcessing={isProcessing}
@@ -160,13 +185,13 @@ export function ImageProcessor() {
         processedBlob={processedBlob}
         generatedFilename={generatedFilename}
         processingStats={processingStats}
-        
+
         outputSettings={outputSettings}
         setOutputSettings={setOutputSettings}
         namingSettings={namingSettings}
         setNamingSettings={setNamingSettings}
         setPixelCrop={setPixelCrop}
-        
+
         onFileUpload={handleFileUpload}
         onDownload={handleDownload}
         onBack={handleBack}

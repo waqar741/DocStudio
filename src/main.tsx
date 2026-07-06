@@ -9,7 +9,9 @@ initializeTheme()
 
 const rootElement = document.getElementById('root')
 if (!rootElement) {
-  throw new Error('Root element not found. Ensure index.html contains a <div id="root">.')
+  throw new Error(
+    'Root element not found. Ensure index.html contains a <div id="root">.',
+  )
 }
 
 createRoot(rootElement).render(

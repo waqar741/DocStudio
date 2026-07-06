@@ -6,7 +6,11 @@ export function LoadingScreen() {
     <div className="flex min-h-dvh items-center justify-center" role="status">
       <div className="text-center">
         <div className="flex justify-center mb-6">
-          <img src="/favicon.svg" alt="Logo" className="h-16 w-16 animate-pulse" />
+          <img
+            src="/favicon.svg"
+            alt="Logo"
+            className="h-16 w-16 animate-pulse"
+          />
         </div>
         <motion.div
           className="mx-auto mb-4 h-10 w-10 rounded-full border-4 border-[var(--border-primary)]"

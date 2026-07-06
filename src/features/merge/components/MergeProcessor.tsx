@@ -21,31 +21,33 @@ export interface MergeNamingSettings {
 export function MergeProcessor() {
   const [files, setFiles] = useState<File[]>([])
   const [step, setStep] = useState<1 | 2 | 3>(1)
-  
+
   const [settings, setSettings] = useState<MergeSettings>({
     pageSize: 'A4',
     orientation: 'portrait',
     margin: 'none',
     outputFormat: 'pdf',
-    imageLayout: 'vertical'
+    imageLayout: 'vertical',
   })
-  
+
   const [namingSettings, setNamingSettings] = useState<MergeNamingSettings>({
     relationship: 'Self',
     documentType: 'Merged',
-    suffix: ''
+    suffix: '',
   })
-  
+
   // Processing State
   const [isProcessing, setIsProcessing] = useState(false)
   const [processedBlob, setProcessedBlob] = useState<Blob | null>(null)
   const [generatedFilename, setGeneratedFilename] = useState<string>('')
-  
-  const addToast = useNotificationStore(state => state.addNotification)
+
+  const addToast = useNotificationStore((state) => state.addNotification)
 
   const handleFilesAdded = (newFiles: File[]) => {
-    setFiles(prev => {
-      const validFiles = newFiles.filter((f): f is File => f !== undefined && f !== null)
+    setFiles((prev) => {
+      const validFiles = newFiles.filter(
+        (f): f is File => f !== undefined && f !== null,
+      )
       return [...prev, ...validFiles]
     })
   }
@@ -77,16 +79,24 @@ export function MergeProcessor() {
   const handleProcess = async () => {
     if (files.length === 0) return
     setIsProcessing(true)
-    
+
     try {
-      const { blob, filename } = await mergeDocumentsBackend(files, settings, namingSettings)
+      const { blob, filename } = await mergeDocumentsBackend(
+        files,
+        settings,
+        namingSettings,
+      )
       setProcessedBlob(blob)
       setGeneratedFilename(filename)
       setStep(3)
       addToast('Success', 'Documents merged successfully!', 'success')
     } catch (error: any) {
       console.error(error)
-      addToast('Error', error.response?.data?.detail || 'Failed to merge documents', 'error')
+      addToast(
+        'Error',
+        error.response?.data?.detail || 'Failed to merge documents',
+        'error',
+      )
     } finally {
       setIsProcessing(false)
     }

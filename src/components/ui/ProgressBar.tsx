@@ -43,17 +43,29 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
     const percentage = Math.round((boundedValue / max) * 100)
 
     return (
-      <div ref={ref} className={cn('flex flex-col gap-2 w-full', className)} {...props}>
+      <div
+        ref={ref}
+        className={cn('flex flex-col gap-2 w-full', className)}
+        {...props}
+      >
         {(label || showValue) && (
           <div className="flex items-center justify-between text-sm">
-            {label && <span className="font-medium text-[var(--text-primary)]">{label}</span>}
-            {showValue && <span className="text-[var(--text-secondary)]">{percentage}%</span>}
+            {label && (
+              <span className="font-medium text-[var(--text-primary)]">
+                {label}
+              </span>
+            )}
+            {showValue && (
+              <span className="text-[var(--text-secondary)]">
+                {percentage}%
+              </span>
+            )}
           </div>
         )}
-        <div 
+        <div
           className={cn(
             'w-full overflow-hidden rounded-full bg-[var(--surface-secondary)] border border-[var(--border-secondary)]',
-            sizeClasses[size]
+            sizeClasses[size],
           )}
           role="progressbar"
           aria-valuenow={boundedValue}
@@ -63,7 +75,7 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
           <div
             className={cn(
               'h-full transition-all duration-300 ease-in-out',
-              colorClasses[color]
+              colorClasses[color],
             )}
             style={{ width: `${percentage}%` }}
           />

@@ -7,7 +7,11 @@ export function NotFoundPage() {
     <div className="flex min-h-[60dvh] items-center justify-center p-4">
       <div className="text-center">
         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--color-warning-50)]">
-          <FileQuestion size={40} className="text-[var(--color-warning-500)]" aria-hidden="true" />
+          <FileQuestion
+            size={40}
+            className="text-[var(--color-warning-500)]"
+            aria-hidden="true"
+          />
         </div>
         <h2
           className="mb-2 text-4xl font-bold"

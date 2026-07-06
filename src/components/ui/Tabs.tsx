@@ -10,7 +10,10 @@ export interface Tab {
   disabled?: boolean
 }
 
-export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface TabsProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'onChange'
+> {
   tabs: Tab[]
   activeId: string
   onChange: (id: string) => void
@@ -18,20 +21,23 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
 }
 
 export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
-  ({ className, tabs, activeId, onChange, fullWidth = false, ...props }, ref) => {
+  (
+    { className, tabs, activeId, onChange, fullWidth = false, ...props },
+    ref,
+  ) => {
     return (
       <div
         ref={ref}
         className={cn(
           'flex items-center overflow-x-auto rounded-lg bg-[var(--surface-secondary)] p-1 border border-[var(--border-secondary)]',
-          className
+          className,
         )}
         role="tablist"
         {...props}
       >
         {tabs.map((tab) => {
           const isActive = activeId === tab.id
-          
+
           return (
             <button
               key={tab.id}
@@ -44,10 +50,12 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
               className={cn(
                 'relative flex items-center justify-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-500)] focus-visible:ring-offset-1',
                 fullWidth && 'flex-1',
-                tab.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+                tab.disabled
+                  ? 'cursor-not-allowed opacity-50'
+                  : 'cursor-pointer',
                 isActive
                   ? 'text-[var(--text-primary)]'
-                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]',
               )}
             >
               {isActive && (
@@ -58,7 +66,16 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
                 />
               )}
               <span className="relative z-10 flex items-center gap-2">
-                {tab.icon && <span className={cn('h-4 w-4', isActive ? 'text-[var(--color-primary-600)]' : '')}>{tab.icon}</span>}
+                {tab.icon && (
+                  <span
+                    className={cn(
+                      'h-4 w-4',
+                      isActive ? 'text-[var(--color-primary-600)]' : '',
+                    )}
+                  >
+                    {tab.icon}
+                  </span>
+                )}
                 {tab.label}
               </span>
             </button>
@@ -66,7 +83,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
         })}
       </div>
     )
-  }
+  },
 )
 
 Tabs.displayName = 'Tabs'

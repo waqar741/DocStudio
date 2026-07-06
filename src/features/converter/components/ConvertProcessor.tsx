@@ -11,20 +11,22 @@ export interface ConvertSettings {
 export function ConvertProcessor() {
   const [files, setFiles] = useState<File[]>([])
   const [step, setStep] = useState<1 | 2 | 3>(1)
-  
+
   const [settings, setSettings] = useState<ConvertSettings>({
-    targetFormat: 'pdf'
+    targetFormat: 'pdf',
   })
-  
+
   const [isProcessing, setIsProcessing] = useState(false)
   const [processedBlob, setProcessedBlob] = useState<Blob | null>(null)
   const [generatedFilename, setGeneratedFilename] = useState<string>('')
-  
-  const addToast = useNotificationStore(state => state.addNotification)
+
+  const addToast = useNotificationStore((state) => state.addNotification)
 
   const handleFilesAdded = (newFiles: File[]) => {
-    setFiles(prev => {
-      const validFiles = newFiles.filter((f): f is File => f !== undefined && f !== null)
+    setFiles((prev) => {
+      const validFiles = newFiles.filter(
+        (f): f is File => f !== undefined && f !== null,
+      )
       return [...prev, ...validFiles]
     })
   }
@@ -56,9 +58,12 @@ export function ConvertProcessor() {
   const handleProcess = async () => {
     if (files.length === 0) return
     setIsProcessing(true)
-    
+
     try {
-      const { blob, filename } = await convertDocumentsBackend(files, settings.targetFormat)
+      const { blob, filename } = await convertDocumentsBackend(
+        files,
+        settings.targetFormat,
+      )
       setProcessedBlob(blob)
       setGeneratedFilename(filename)
       setStep(3)

@@ -2,7 +2,10 @@ import { forwardRef } from 'react'
 import type { InputHTMLAttributes } from 'react'
 import { cn } from '@/utils/cn'
 
-export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
+export interface SliderProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type'
+> {
   label?: string
   description?: string
   error?: string
@@ -29,22 +32,38 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
     },
     ref,
   ) => {
-    const generatedId = id || (label ? `slider-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined)
-    
+    const generatedId =
+      id ||
+      (label ? `slider-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined)
+
     // Attempt to calculate percentage for the fill track, fallback to 50% if uncontrolled
-    const displayValue = value !== undefined ? value : (defaultValue !== undefined ? defaultValue : min)
+    const displayValue =
+      value !== undefined
+        ? value
+        : defaultValue !== undefined
+          ? defaultValue
+          : min
     const numericValue = Number(displayValue)
-    const percentage = Math.max(0, Math.min(100, ((numericValue - Number(min)) / (Number(max) - Number(min))) * 100))
+    const percentage = Math.max(
+      0,
+      Math.min(
+        100,
+        ((numericValue - Number(min)) / (Number(max) - Number(min))) * 100,
+      ),
+    )
 
     return (
-      <div className={cn('flex flex-col gap-3', fullWidth && 'w-full', className)}>
+      <div
+        className={cn('flex flex-col gap-3', fullWidth && 'w-full', className)}
+      >
         {label && (
           <div className="flex items-center justify-between">
             <label
               htmlFor={generatedId}
               className={cn(
                 'text-sm font-medium leading-none text-[var(--text-primary)] peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-                error && 'text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]',
+                error &&
+                  'text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]',
               )}
             >
               {label}
@@ -56,7 +75,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             )}
           </div>
         )}
-        
+
         <div className="relative flex h-5 w-full items-center">
           <input
             type="range"
@@ -81,11 +100,11 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
           {/* Custom track styling */}
           <div className="absolute inset-y-0 left-0 z-10 flex w-full items-center">
             <div className="h-1.5 w-full rounded-full bg-[var(--surface-secondary)] border border-[var(--border-secondary)] overflow-hidden">
-              <div 
+              <div
                 className={cn(
-                  "h-full bg-[var(--color-primary-500)] transition-all duration-75",
-                  disabled && "bg-[var(--text-tertiary)]"
-                )} 
+                  'h-full bg-[var(--color-primary-500)] transition-all duration-75',
+                  disabled && 'bg-[var(--text-tertiary)]',
+                )}
                 style={{ width: `${percentage}%` }}
               />
             </div>

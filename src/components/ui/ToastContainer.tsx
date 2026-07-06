@@ -29,7 +29,7 @@ export function ToastContainer() {
   const { notifications, removeNotification } = useNotificationStore()
 
   return (
-    <div 
+    <div
       aria-live="assertive"
       className="pointer-events-none fixed inset-0 z-[100] flex flex-col gap-2 p-4 px-4 sm:items-end sm:p-6"
     >
@@ -47,15 +47,18 @@ export function ToastContainer() {
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
               className={cn(
                 'pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-lg border p-4 shadow-lg ring-1 ring-[var(--border-primary)]/20',
-                severityClasses[notification.severity]
+                severityClasses[notification.severity],
               )}
               role="status"
             >
-              <Icon 
-                className={cn('h-5 w-5 shrink-0 mt-0.5', iconColorClasses[notification.severity])} 
-                aria-hidden="true" 
+              <Icon
+                className={cn(
+                  'h-5 w-5 shrink-0 mt-0.5',
+                  iconColorClasses[notification.severity],
+                )}
+                aria-hidden="true"
               />
-              
+
               <div className="flex flex-1 flex-col gap-1">
                 <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                   {notification.title}
@@ -66,7 +69,7 @@ export function ToastContainer() {
                   </p>
                 )}
               </div>
-              
+
               <button
                 onClick={() => removeNotification(notification.id)}
                 className="inline-flex shrink-0 rounded-md p-1.5 text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)] focus:ring-offset-2 transition-colors"

@@ -9,7 +9,10 @@ export interface RadioOption {
   disabled?: boolean
 }
 
-export interface RadioGroupProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'value' | 'onChange'> {
+export interface RadioGroupProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'value' | 'onChange'
+> {
   options: RadioOption[]
   label?: ReactNode
   description?: ReactNode
@@ -41,22 +44,31 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
     ref,
   ) => {
     return (
-      <div ref={ref} className={cn('flex flex-col gap-3', className)} role="radiogroup">
+      <div
+        ref={ref}
+        className={cn('flex flex-col gap-3', className)}
+        role="radiogroup"
+      >
         {(label || description) && (
           <div className="flex flex-col gap-1.5">
             {label && (
               <label
                 className={cn(
                   'text-sm font-medium leading-none text-[var(--text-primary)]',
-                  error && 'text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]',
+                  error &&
+                    'text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]',
                 )}
               >
                 {label}
-                {required && <span className="ml-1 text-[var(--color-danger-500)]">*</span>}
+                {required && (
+                  <span className="ml-1 text-[var(--color-danger-500)]">*</span>
+                )}
               </label>
             )}
             {description && !error && (
-              <p className="text-sm text-[var(--text-secondary)]">{description}</p>
+              <p className="text-sm text-[var(--text-secondary)]">
+                {description}
+              </p>
             )}
             {error && (
               <p className="text-sm font-medium text-[var(--color-danger-600)] dark:text-[var(--color-danger-500)]">
@@ -65,13 +77,22 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
             )}
           </div>
         )}
-        
-        <div className={cn('flex', layout === 'vertical' ? 'flex-col gap-3' : 'flex-wrap gap-6')}>
+
+        <div
+          className={cn(
+            'flex',
+            layout === 'vertical' ? 'flex-col gap-3' : 'flex-wrap gap-6',
+          )}
+        >
           {options.map((option, index) => {
             const id = `radio-${name}-${option.value}`
-            const isChecked = value !== undefined ? value === option.value : undefined
-            const isDefaultChecked = defaultValue !== undefined ? defaultValue === option.value : undefined
-            
+            const isChecked =
+              value !== undefined ? value === option.value : undefined
+            const isDefaultChecked =
+              defaultValue !== undefined
+                ? defaultValue === option.value
+                : undefined
+
             return (
               <div key={option.value} className="flex items-start gap-3">
                 <div className="flex h-5 items-center">
@@ -87,7 +108,8 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
                     required={required && index === 0} // Only need required on first radio
                     className={cn(
                       'peer h-4 w-4 shrink-0 rounded-full border border-[var(--border-secondary)] bg-transparent text-[var(--color-primary-600)] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer',
-                      error && 'border-[var(--color-danger-500)] focus-visible:ring-[var(--color-danger-500)]',
+                      error &&
+                        'border-[var(--color-danger-500)] focus-visible:ring-[var(--color-danger-500)]',
                     )}
                     {...props}
                   />
@@ -105,7 +127,9 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
                       </label>
                     )}
                     {option.description && (
-                      <p className="text-sm text-[var(--text-secondary)] leading-snug">{option.description}</p>
+                      <p className="text-sm text-[var(--text-secondary)] leading-snug">
+                        {option.description}
+                      </p>
                     )}
                   </div>
                 )}
