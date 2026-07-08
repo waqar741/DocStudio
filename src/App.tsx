@@ -26,9 +26,7 @@ const SettingsPage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })),
 )
-const ComponentsPage = lazy(() =>
-  import('@/pages/ComponentsPage').then((m) => ({ default: m.ComponentsPage })),
-)
+
 
 export default function App() {
   return (
@@ -84,14 +82,7 @@ export default function App() {
                 </Suspense>
               }
             />
-            <Route
-              path={ROUTES.COMPONENTS}
-              element={
-                <Suspense fallback={<LoadingScreen />}>
-                  <ComponentsPage />
-                </Suspense>
-              }
-            />
+
             <Route
               path="*"
               element={

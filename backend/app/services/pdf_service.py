@@ -1,17 +1,82 @@
 import fitz  # PyMuPDF
 import io
 import zipfile
+from PIL import Image
 
-def compress_pdf(file_bytes: bytes, level: str = "balanced") -> bytes:
+def _compress_pdf_images(doc, quality: int, max_dim: int = None):
+    for i in range(len(doc)):
+        page = doc[i]
+        image_list = page.get_images(full=True)
+        for img in image_list:
+            xref = img[0]
+            try:
+                base_image = doc.extract_image(xref)
+                if not base_image: continue
+                image_bytes = base_image["image"]
+                
+                img_pil = Image.open(io.BytesIO(image_bytes))
+                if img_pil.mode in ("RGBA", "P"): 
+                    img_pil = img_pil.convert("RGB")
+                
+                if max_dim:
+                    w, h = img_pil.size
+                    if w > max_dim or h > max_dim:
+                        ratio = min(max_dim/w, max_dim/h)
+                        img_pil = img_pil.resize((int(w*ratio), int(h*ratio)), Image.Resampling.LANCZOS)
+                
+                out_bytes = io.BytesIO()
+                img_pil.save(out_bytes, format="JPEG", quality=quality, optimize=True)
+                new_image_bytes = out_bytes.getvalue()
+                
+                if len(new_image_bytes) < len(image_bytes):
+                    page.replace_image(xref, stream=new_image_bytes)
+            except Exception:
+                pass
+
+def compress_pdf(file_bytes: bytes, level: str = "balanced", target_kb: int = 0) -> bytes:
     doc = fitz.open(stream=file_bytes, filetype="pdf")
     
-    if level == "max":
-        # clean=True sanitizes content streams (more compression)
-        return doc.tobytes(garbage=4, deflate=True, clean=True)
-    elif level == "balanced":
-        return doc.tobytes(garbage=3, deflate=True)
-    else: # high quality
-        return doc.tobytes(garbage=1, deflate=True)
+    if target_kb > 0:
+        target_bytes = target_kb * 1024
+        current_bytes = len(file_bytes)
+        
+        if current_bytes <= target_bytes:
+            return file_bytes
+            
+        low, high = 5, 90
+        best_bytes = None
+        
+        for _ in range(6):
+            mid = (low + high) // 2
+            test_doc = fitz.open(stream=file_bytes, filetype="pdf")
+            _compress_pdf_images(test_doc, mid)
+            test_bytes = test_doc.tobytes(garbage=3, deflate=True)
+            
+            if not best_bytes or len(test_bytes) < len(best_bytes):
+                best_bytes = test_bytes
+            
+            if len(test_bytes) <= target_bytes:
+                low = mid + 1
+            else:
+                high = mid - 1
+                
+        if best_bytes and len(best_bytes) <= target_bytes:
+            return best_bytes
+        else:
+            _compress_pdf_images(doc, 5, max_dim=800)
+            fallback_bytes = doc.tobytes(garbage=4, deflate=True, clean=True)
+            if best_bytes and len(best_bytes) < len(fallback_bytes):
+                return best_bytes
+            return fallback_bytes
+    else:
+        if level == "max":
+            _compress_pdf_images(doc, 40)
+            return doc.tobytes(garbage=4, deflate=True, clean=True)
+        elif level == "balanced":
+            _compress_pdf_images(doc, 70)
+            return doc.tobytes(garbage=3, deflate=True)
+        else: # high quality
+            return doc.tobytes(garbage=1, deflate=True)
 
 def split_pdf(file_bytes: bytes, split_type: str, ranges: str, original_name: str) -> tuple[bytes, str, str]:
     """

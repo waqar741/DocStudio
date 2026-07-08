@@ -2,10 +2,12 @@ export async function compressPdf(
   file: File,
   level: string,
   filename: string,
+  targetKB: number = 0,
 ): Promise<Blob> {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('level', level)
+  formData.append('target_kb', targetKB.toString())
   formData.append('filename', filename)
 
   const res = await fetch(

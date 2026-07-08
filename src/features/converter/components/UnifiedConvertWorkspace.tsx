@@ -72,8 +72,8 @@ export function UnifiedConvertWorkspace({
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#f8f9fa] dark:bg-[#111] overflow-hidden relative">
-      <div className="shrink-0 bg-white/80 dark:bg-[#1a1a1a]/80 backdrop-blur-md border-b border-[var(--border-secondary)] px-6 py-2.5 grid grid-cols-3 items-center">
+    <div className="flex-1 flex flex-col h-full bg-[var(--surface-secondary)] overflow-hidden relative">
+      <div className="shrink-0 bg-[var(--surface-primary)]/80 backdrop-blur-md border-b border-[var(--border-secondary)] px-6 py-2.5 grid grid-cols-3 items-center">
         <div className="flex justify-start">
           {step > 1 && (
             <button
@@ -119,7 +119,7 @@ export function UnifiedConvertWorkspace({
               Convert images to PDF, or PDF to images
             </p>
 
-            <div className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-sm border border-[var(--border-secondary)] p-8">
+            <div className="w-full bg-[var(--surface-primary)] rounded-2xl shadow-sm border border-[var(--border-secondary)] p-8">
               <UploadZone
                 onDropFiles={(dropped) => onFilesAdded(dropped)}
                 accept="image/jpeg,image/png,image/webp,application/pdf"
@@ -144,7 +144,7 @@ export function UnifiedConvertWorkspace({
           <div className="flex-1 grid grid-cols-[260px_1fr_260px] xl:grid-cols-[300px_1fr_300px] gap-4 md:gap-6 animate-in fade-in duration-500 min-h-0">
             {/* Left Panel */}
             <div className="flex flex-col gap-3 overflow-y-auto custom-scrollbar pr-2 pb-6">
-              <div className="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-sm border border-[var(--border-secondary)] overflow-hidden p-4">
+              <div className="bg-[var(--surface-primary)] rounded-xl shadow-sm border border-[var(--border-secondary)] overflow-hidden p-4">
                 <h3 className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] mb-3">
                   Conversion Settings
                 </h3>
@@ -161,7 +161,7 @@ export function UnifiedConvertWorkspace({
                           targetFormat: e.target.value as any,
                         }))
                       }
-                      className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent font-medium text-sm"
+                      className="w-full p-2 border border-[var(--border-subtle)] rounded-lg bg-transparent font-medium text-sm"
                     >
                       <option value="pdf">PDF Document (.pdf)</option>
                       <option value="jpg">JPEG Image (.jpg)</option>
@@ -174,8 +174,8 @@ export function UnifiedConvertWorkspace({
             </div>
 
             {/* Center Panel */}
-            <div className="flex flex-col bg-white dark:bg-[#1a1a1a] rounded-xl shadow-sm border border-[var(--border-secondary)] overflow-hidden min-w-[400px]">
-              <div className="p-4 border-b border-[var(--border-secondary)] bg-gray-50 dark:bg-[#151515] flex justify-between items-center">
+            <div className="flex flex-col bg-[var(--surface-primary)] rounded-xl shadow-sm border border-[var(--border-secondary)] overflow-hidden min-w-[400px]">
+              <div className="p-4 border-b border-[var(--border-secondary)] bg-[var(--surface-secondary)] flex justify-between items-center">
                 <h3 className="font-bold text-sm text-[var(--text-primary)]">
                   Files to Convert
                 </h3>
@@ -184,7 +184,7 @@ export function UnifiedConvertWorkspace({
                 </span>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-50/50 dark:bg-[#151515]/50">
+              <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-[var(--surface-secondary)]/50">
                 {files.map((file, index) => {
                   const isPdf = file.type === 'application/pdf'
                   return (
@@ -194,8 +194,8 @@ export function UnifiedConvertWorkspace({
                       onDragStart={() => handleDragStart(index)}
                       onDragOver={(e) => handleDragOver(e)}
                       onDrop={() => handleDrop(index)}
-                      className={`group flex items-center gap-3 p-3 bg-white dark:bg-[#222] border rounded-lg shadow-sm transition-all cursor-move
-                        ${draggedIndex === index ? 'opacity-50 scale-[0.98]' : 'hover:border-blue-400 hover:shadow-md border-gray-200 dark:border-gray-700'}`}
+                      className={`group flex items-center gap-3 p-3 bg-[var(--surface-primary)] border rounded-lg shadow-sm transition-all cursor-move
+                        ${draggedIndex === index ? 'opacity-50 scale-[0.98]' : 'hover:border-blue-400 hover:shadow-md border-[var(--border-subtle)]'}`}
                     >
                       <GripVertical
                         size={20}
@@ -248,7 +248,7 @@ export function UnifiedConvertWorkspace({
 
             {/* Right Panel */}
             <div className="flex flex-col overflow-y-auto custom-scrollbar pb-6 pr-2">
-              <div className="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-sm border border-[var(--border-secondary)] p-4 flex flex-col flex-1 relative overflow-hidden">
+              <div className="bg-[var(--surface-primary)] rounded-xl shadow-sm border border-[var(--border-secondary)] p-4 flex flex-col flex-1 relative overflow-hidden">
                 <h3 className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] mb-3">
                   Conversion Summary
                 </h3>
@@ -269,21 +269,21 @@ export function UnifiedConvertWorkspace({
                     <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold mb-1 uppercase tracking-wide">
                       Target Format
                     </p>
-                    <p className="font-mono text-gray-800 dark:text-gray-200 break-all leading-tight uppercase">
+                    <p className="font-mono text-[var(--text-primary)] break-all leading-tight uppercase">
                       {settings.targetFormat}
                     </p>
                   </div>
 
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800">
+                  <div className="flex justify-between items-center py-2 border-b border-[var(--border-subtle)]">
                     <span className="text-[var(--text-secondary)]">
                       Total Files
                     </span>
-                    <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">
+                    <span className="font-bold text-[var(--text-primary)] text-sm">
                       {files.length}
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800">
+                  <div className="flex justify-between items-center py-2 border-b border-[var(--border-subtle)]">
                     <span className="text-[var(--text-secondary)]">
                       Total Inputs Size
                     </span>
@@ -315,9 +315,9 @@ export function UnifiedConvertWorkspace({
               Review Final Document
             </h2>
 
-            <div className="w-full bg-white dark:bg-[#1a1a1a] rounded-xl shadow-sm border border-[var(--border-secondary)] overflow-hidden">
-              <div className="p-6 border-b border-[var(--border-secondary)] bg-gray-50/50 flex flex-col md:flex-row gap-6 items-center">
-                <div className="w-48 h-48 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white flex items-center justify-center p-2 shadow-sm shrink-0">
+            <div className="w-full bg-[var(--surface-primary)] rounded-xl shadow-sm border border-[var(--border-secondary)] overflow-hidden">
+              <div className="p-6 border-b border-[var(--border-secondary)] bg-[var(--surface-secondary)] flex flex-col md:flex-row gap-6 items-center">
+                <div className="w-48 h-48 border border-[var(--border-subtle)] rounded-lg overflow-hidden bg-white flex items-center justify-center p-2 shadow-sm shrink-0">
                   {processedBlobUrl && (
                     <img
                       src={processedBlobUrl}
@@ -370,7 +370,7 @@ export function UnifiedConvertWorkspace({
                 </div>
               </div>
 
-              <div className="p-8 flex flex-col items-center gap-4 bg-gray-50 dark:bg-[#1a1a1a]">
+              <div className="p-8 flex flex-col items-center gap-4 bg-[var(--surface-secondary)]">
                 <Button
                   variant="primary"
                   size="lg"

@@ -23,6 +23,7 @@
     "cropperjs": "^1.6.1",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.20.1",
+    "idb": "^8.0.3",
     "lucide-react": "^0.525.0",
     "react": "^19.2.7",
     "react-cropper": "^2.3.3",

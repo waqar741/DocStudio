@@ -105,11 +105,12 @@ import json
 async def api_compress_pdf(
     file: UploadFile = File(...),
     level: str = Form("balanced"),
+    target_kb: int = Form(0),
     filename: str = Form("compressed.pdf")
 ):
     try:
         content = await file.read()
-        processed = compress_pdf(content, level)
+        processed = compress_pdf(content, level, target_kb)
         return Response(
             content=processed,
             media_type="application/pdf",

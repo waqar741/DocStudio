@@ -1,3 +1,5 @@
+import { useNotificationStore } from '@/store/notificationStore'
+
 export class DownloadService {
   /**
    * Executes a robust, synchronous download of a Blob.
@@ -50,6 +52,7 @@ export class DownloadService {
         const writable = await handle.createWritable()
         await writable.write(blob)
         await writable.close()
+        useNotificationStore.getState().addNotification('Success', 'File saved successfully', 'success')
         return // Successfully saved
       } catch (err: any) {
         // If user cancelled, just abort. Otherwise, fallback to the <a> tag method
@@ -74,6 +77,8 @@ export class DownloadService {
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
+
+    useNotificationStore.getState().addNotification('Success', 'File downloaded successfully', 'success')
 
     // Revoke async to ensure download starts before memory is cleared
     setTimeout(() => {

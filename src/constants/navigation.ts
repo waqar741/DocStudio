@@ -5,7 +5,6 @@ import {
   Merge,
   ArrowLeftRight,
   Settings,
-  Palette,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { ROUTES } from './routes'
@@ -55,12 +54,7 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     icon: Settings,
     description: 'Manage application preferences',
   },
-  {
-    label: 'Components',
-    path: ROUTES.COMPONENTS,
-    icon: Palette,
-    description: 'Design system showcase',
-  },
+
 ]
 
 /** Navigation items for dashboard action cards (excludes Dashboard itself) */

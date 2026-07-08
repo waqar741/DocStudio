@@ -4,6 +4,7 @@ import { buildImageFilename, processImageBackend } from '../api/imageApi'
 import { UnifiedImageWorkspace } from './UnifiedImageWorkspace'
 import { useNotificationStore } from '@/store/notificationStore'
 import { useDebounce } from '../../../hooks/useDebounce'
+import { useRecentFiles } from '../../../hooks/useRecentFiles'
 
 export type Area = {
   x: number
@@ -65,6 +66,7 @@ export function ImageProcessor() {
 
   const addToast = useNotificationStore((state) => state.addNotification)
   const isFirstRender = useRef(true)
+  const { addFile } = useRecentFiles()
 
   // Handlers for Step Transitions
   const handleFileUpload = (uploadedFile: File) => {
@@ -175,9 +177,20 @@ export function ImageProcessor() {
     )
   }, [file, namingSettings, outputSettings.format])
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!processedBlob || !generatedFilename) return
     DownloadService.download(processedBlob, generatedFilename)
+    
+    try {
+      await addFile({
+        type: 'image',
+        filename: generatedFilename,
+        data: processedBlob,
+        size: processedBlob.size,
+      })
+    } catch (err) {
+      console.error('Failed to save to local DB:', err)
+    }
   }
 
   return (

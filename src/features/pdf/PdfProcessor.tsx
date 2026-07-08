@@ -4,11 +4,12 @@ import { UnifiedWorkspace } from './components/UnifiedWorkspace'
 import { DownloadService } from '@/services/DownloadService'
 import * as pdfApi from './api/pdfApi'
 import { useNotificationStore } from '@/store/notificationStore'
+import { useRecentFiles } from '@/hooks/useRecentFiles'
 
 export function PdfProcessor() {
   const [file, setFile] = useState<File | null>(null)
   const [activeTool, setActiveTool] = useState<PdfTool>('compress')
-
+  
   // State Machine
   const [step, setStep] = useState<1 | 2 | 3>(1)
 
@@ -23,8 +24,13 @@ export function PdfProcessor() {
   } | null>(null)
 
   const addToast = useNotificationStore((state) => state.addNotification)
+  const { addFile } = useRecentFiles()
 
   const handleFileUpload = (uploadedFile: File) => {
+    if (uploadedFile.type !== 'application/pdf' && !uploadedFile.name.toLowerCase().endsWith('.pdf')) {
+      addToast('Error', 'Please select a valid PDF document.', 'error')
+      return
+    }
     setFile(uploadedFile)
     setStep(2)
   }
@@ -69,6 +75,7 @@ export function PdfProcessor() {
           file,
           config.compressionLevel || 'balanced',
           outName,
+          config.targetKB || 0,
         )
       } else if (activeTool === 'split') {
         outName = file.name.replace('.pdf', '_split.pdf')
@@ -88,7 +95,6 @@ export function PdfProcessor() {
         outName = file.name.replace('.pdf', '_rotated.pdf')
         const rotationsObj = config.rotations || {}
 
-        // Fallback to 90 degrees for selected pages if rotations object is empty
         if (
           Object.keys(rotationsObj).length === 0 &&
           config.selectedPages &&
@@ -130,6 +136,7 @@ export function PdfProcessor() {
           tempFile,
           config.outputCompressionLevel || 'balanced',
           outName,
+          0,
         )
       }
 
@@ -152,30 +159,47 @@ export function PdfProcessor() {
     }
   }
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (processedBlob && processedFilename) {
       DownloadService.download(processedBlob, processedFilename)
+      
+      try {
+        await addFile({
+          type: 'pdf',
+          filename: processedFilename,
+          data: processedBlob,
+          size: processedBlob.size,
+        })
+      } catch (err) {
+        console.error('Failed to save to local DB:', err)
+      }
     }
   }
 
   return (
-    <div className="flex flex-1 w-full min-h-0 overflow-hidden bg-[var(--surface-secondary)]">
-      <LeftSidebar activeTool={activeTool} onToolSelect={handleToolSelect} />
-
-      <UnifiedWorkspace
-        file={file}
-        activeTool={activeTool}
-        step={step}
-        isProcessing={isProcessing}
-        processedBlob={processedBlob}
-        processingStats={processingStats}
-        onFileUpload={handleFileUpload}
-        onFileReplace={handleFileReplace}
-        onProceedToReview={() => setStep(3)}
-        onProcess={handleProcess}
-        onDownload={handleDownload}
-        onStartNew={handleStartNew}
+    <div className="flex flex-col md:flex-row h-full w-full bg-[var(--surface-secondary)] relative overflow-hidden">
+      
+      <LeftSidebar 
+        activeTool={activeTool} 
+        onToolSelect={handleToolSelect}
       />
+
+      {/* Main Workspace Area */}
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto custom-scrollbar">
+        <UnifiedWorkspace
+          file={file}
+          activeTool={activeTool}
+          step={step}
+          isProcessing={isProcessing}
+          processingStats={processingStats}
+          onFileUpload={handleFileUpload}
+          onFileReplace={handleFileReplace}
+          onProceedToReview={() => setStep(3)}
+          onProcess={handleProcess}
+          onDownload={handleDownload}
+          onStartNew={handleStartNew}
+        />
+      </div>
     </div>
   )
 }
