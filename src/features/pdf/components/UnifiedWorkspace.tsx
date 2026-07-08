@@ -35,6 +35,7 @@ import {
   PlusCircle,
   Settings2,
 } from 'lucide-react'
+import { useSettingsStore } from '@/store/settingsStore'
 
 // --- Utility Functions ---
 export function parsePageRanges(rangesStr: string, maxPages: number): Set<number> {
@@ -162,8 +163,18 @@ export function UnifiedWorkspace({
   const [numPages, setNumPages] = useState<number>(0)
   const fileUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file])
 
+  const { defaultPdfCompression } = useSettingsStore()
+  const initialTargetKB = useMemo(() => {
+    switch (defaultPdfCompression) {
+      case 'Extreme': return '50'
+      case 'Recommended': return '200'
+      case 'Less': return '500'
+      default: return 'none'
+    }
+  }, [defaultPdfCompression])
+
   const [compressionLevel, setCompressionLevel] = useState('balanced')
-  const [targetKB, setTargetKB] = useState<string>('none')
+  const [targetKB, setTargetKB] = useState<string>(initialTargetKB)
   const [customKB, setCustomKB] = useState<number>()
   const [pageRangeStr, setPageRangeStr] = useState('')
   const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set())

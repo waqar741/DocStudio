@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { UnifiedMergeWorkspace } from './UnifiedMergeWorkspace'
 import { mergeDocumentsBackend } from '../api/mergeApi'
 import { DownloadService } from '@/services/DownloadService'
@@ -20,7 +21,16 @@ export interface MergeNamingSettings {
 
 export function MergeProcessor() {
   const [files, setFiles] = useState<File[]>([])
-  const [step, setStep] = useState<1 | 2 | 3>(1)
+  
+  const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+  
+  const stepParam = searchParams.get('step')
+  const step = stepParam ? (parseInt(stepParam) as 1 | 2 | 3) : 1
+  
+  const setStep = (newStep: 1 | 2 | 3, replace = false) => {
+    setSearchParams({ step: newStep.toString() }, { replace })
+  }
 
   const [settings, setSettings] = useState<MergeSettings>({
     pageSize: 'A4',
@@ -110,16 +120,12 @@ export function MergeProcessor() {
 
   const handleStartNew = () => {
     setFiles([])
-    setStep(1)
+    setSearchParams({}, { replace: true })
     setProcessedBlob(null)
   }
 
   const handleBack = () => {
-    if (step === 2) {
-      setStep(1)
-    } else if (step === 3) {
-      setStep(2)
-    }
+    navigate(-1)
   }
 
   return (

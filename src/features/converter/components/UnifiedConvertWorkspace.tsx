@@ -73,8 +73,8 @@ export function UnifiedConvertWorkspace({
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[var(--surface-secondary)] overflow-hidden relative">
-      <div className="shrink-0 bg-[var(--surface-primary)]/80 backdrop-blur-md border-b border-[var(--border-secondary)] px-6 py-2.5 grid grid-cols-3 items-center">
-        <div className="flex justify-start">
+      <div className="shrink-0 bg-[var(--surface-primary)]/80 backdrop-blur-md border-b border-[var(--border-secondary)] px-4 py-3 lg:px-6 lg:py-2.5 flex flex-col lg:grid lg:grid-cols-3 items-center">
+        <div className="flex w-full justify-start lg:w-auto">
           {step > 1 && (
             <button
               onClick={onBack}
@@ -85,7 +85,7 @@ export function UnifiedConvertWorkspace({
           )}
         </div>
 
-        <div className="flex justify-center items-center gap-2 text-sm font-semibold">
+        <div className="flex justify-center items-center gap-1 sm:gap-2 text-[10px] sm:text-xs md:text-sm font-semibold mt-2 lg:mt-0 flex-wrap w-full px-2">
           <span
             className={`px-3 py-1 rounded-full whitespace-nowrap ${step >= 1 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}
           >
@@ -104,7 +104,7 @@ export function UnifiedConvertWorkspace({
             3. Review
           </span>
         </div>
-        <div></div>
+        <div className="hidden lg:block"></div>
       </div>
 
       <div
@@ -141,9 +141,10 @@ export function UnifiedConvertWorkspace({
         )}
 
         {step === 2 && (
-          <div className="flex-1 grid grid-cols-[260px_1fr_260px] xl:grid-cols-[300px_1fr_300px] gap-4 md:gap-6 animate-in fade-in duration-500 min-h-0">
-            {/* Left Panel */}
-            <div className="flex flex-col gap-3 overflow-y-auto custom-scrollbar pr-2 pb-6">
+          <div className="flex-1 overflow-y-auto custom-scrollbar lg:overflow-hidden min-h-0 animate-in fade-in duration-500">
+            <div className="flex flex-col lg:grid lg:grid-cols-[260px_1fr_260px] xl:grid-cols-[300px_1fr_300px] gap-4 md:gap-6 lg:h-full pb-6 lg:pb-0">
+              {/* Left Panel */}
+              <div className="flex flex-col gap-3 lg:overflow-y-auto custom-scrollbar lg:pr-2 lg:pb-6 shrink-0">
               <div className="bg-[var(--surface-primary)] rounded-xl shadow-sm border border-[var(--border-secondary)] overflow-hidden p-4">
                 <h3 className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] mb-3">
                   Conversion Settings
@@ -174,7 +175,7 @@ export function UnifiedConvertWorkspace({
             </div>
 
             {/* Center Panel */}
-            <div className="flex flex-col bg-[var(--surface-primary)] rounded-xl shadow-sm border border-[var(--border-secondary)] overflow-hidden min-w-[400px]">
+            <div className="flex flex-col bg-[var(--surface-primary)] rounded-xl shadow-sm border border-[var(--border-secondary)] overflow-hidden min-h-[400px] lg:min-h-0 shrink-0 lg:min-w-[400px]">
               <div className="p-4 border-b border-[var(--border-secondary)] bg-[var(--surface-secondary)] flex justify-between items-center">
                 <h3 className="font-bold text-sm text-[var(--text-primary)]">
                   Files to Convert
@@ -247,7 +248,7 @@ export function UnifiedConvertWorkspace({
             </div>
 
             {/* Right Panel */}
-            <div className="flex flex-col overflow-y-auto custom-scrollbar pb-6 pr-2">
+            <div className="flex flex-col lg:overflow-y-auto custom-scrollbar lg:pb-6 lg:pr-2 shrink-0">
               <div className="bg-[var(--surface-primary)] rounded-xl shadow-sm border border-[var(--border-secondary)] p-4 flex flex-col flex-1 relative overflow-hidden">
                 <h3 className="font-bold text-xs uppercase tracking-wider text-[var(--text-secondary)] mb-3">
                   Conversion Summary
@@ -305,6 +306,7 @@ export function UnifiedConvertWorkspace({
                   </Button>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         )}

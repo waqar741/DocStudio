@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { LeftSidebar, type PdfTool } from './components/LeftSidebar'
 import { UnifiedWorkspace } from './components/UnifiedWorkspace'
 import { DownloadService } from '@/services/DownloadService'
@@ -10,8 +11,14 @@ export function PdfProcessor() {
   const [file, setFile] = useState<File | null>(null)
   const [activeTool, setActiveTool] = useState<PdfTool>('compress')
   
-  // State Machine
-  const [step, setStep] = useState<1 | 2 | 3>(1)
+  const [searchParams, setSearchParams] = useSearchParams()
+  
+  const stepParam = searchParams.get('step')
+  const step = stepParam ? (parseInt(stepParam) as 1 | 2 | 3) : 1
+  
+  const setStep = (newStep: 1 | 2 | 3, replace = false) => {
+    setSearchParams({ step: newStep.toString() }, { replace })
+  }
 
   // Processing State
   const [isProcessing, setIsProcessing] = useState(false)
@@ -37,14 +44,14 @@ export function PdfProcessor() {
 
   const handleFileReplace = () => {
     setFile(null)
-    setStep(1)
+    setSearchParams({}, { replace: true })
     setProcessedBlob(null)
     setProcessingStats(null)
   }
 
   const handleStartNew = () => {
     setFile(null)
-    setStep(1)
+    setSearchParams({}, { replace: true })
     setProcessedBlob(null)
     setProcessingStats(null)
   }

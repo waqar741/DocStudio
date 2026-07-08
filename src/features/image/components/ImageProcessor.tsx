@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { DownloadService } from '../../../services/DownloadService'
 import { buildImageFilename, processImageBackend } from '../api/imageApi'
 import { UnifiedImageWorkspace } from './UnifiedImageWorkspace'
 import { useNotificationStore } from '@/store/notificationStore'
 import { useDebounce } from '../../../hooks/useDebounce'
 import { useRecentFiles } from '../../../hooks/useRecentFiles'
+import { useSettingsStore } from '@/store/settingsStore'
 
 export type Area = {
   x: number
@@ -35,8 +37,15 @@ export interface ProcessingStats {
 }
 
 export function ImageProcessor() {
-  // State Machine
-  const [step, setStep] = useState<1 | 2>(1)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+  
+  const stepParam = searchParams.get('step')
+  const step = stepParam ? (parseInt(stepParam) as 1 | 2) : 1
+  
+  const setStep = (newStep: 1 | 2, replace = false) => {
+    setSearchParams({ step: newStep.toString() }, { replace })
+  }
 
   // Shared state
   const [file, setFile] = useState<File | null>(null)
@@ -44,11 +53,13 @@ export function ImageProcessor() {
   // Crop state
   const [pixelCrop, setPixelCrop] = useState<Area | null>(null)
 
+  const { defaultImageFormat } = useSettingsStore()
+
   // Settings State
   const [outputSettings, setOutputSettings] = useState<OutputSettings>({
     resolution: 'original',
     targetKB: 'none',
-    format: 'jpg',
+    format: defaultImageFormat === 'pdf' ? 'jpg' : defaultImageFormat,
   })
 
   const [namingSettings, setNamingSettings] = useState<NamingSettings>({
@@ -74,17 +85,8 @@ export function ImageProcessor() {
     setStep(2)
   }
 
-  const handleFileReplace = () => {
-    setFile(null)
-    setStep(1)
-    setProcessedBlob(null)
-    setProcessingStats(null)
-  }
-
   const handleBack = () => {
-    if (step === 2) {
-      handleFileReplace()
-    }
+    navigate(-1)
   }
 
   // Memoize dependencies for Live Preview

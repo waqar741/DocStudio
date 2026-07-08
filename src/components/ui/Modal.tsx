@@ -10,7 +10,7 @@ export interface ModalProps {
   description?: string
   children: React.ReactNode
   footer?: React.ReactNode
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | 'full'
   className?: string
   hideCloseButton?: boolean
 }
@@ -21,6 +21,9 @@ const maxWidthClasses = {
   lg: 'sm:max-w-lg',
   xl: 'sm:max-w-xl',
   '2xl': 'sm:max-w-2xl',
+  '3xl': 'sm:max-w-3xl',
+  '4xl': 'sm:max-w-4xl',
+  '5xl': 'sm:max-w-5xl',
   full: 'sm:max-w-full sm:mx-4',
 }
 
