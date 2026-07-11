@@ -308,74 +308,93 @@ export function UnifiedWorkspace({
 
         {/* Step 2: Configure */}
         {step === 2 && file && (
-          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+          <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
             
             {/* File Info Bar */}
-            <div className="bg-[var(--surface-primary)] rounded-2xl shadow-sm border border-[var(--border-subtle)] p-4 flex items-center justify-between">
-              <div className="flex items-center gap-4 min-w-0">
-                <div className="p-3 bg-[var(--color-primary-50)] text-[var(--color-primary-500)] rounded-xl shrink-0">
-                  <FileIcon size={24} />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-[var(--text-primary)] truncate">
-                    {file.name}
-                  </h3>
-                  <p className="text-sm text-[var(--text-secondary)]">
-                    {formatSize(file.size)} • {numPages} Pages
-                  </p>
-                </div>
+            <div className="bg-[var(--surface-primary)] rounded-2xl shadow-sm border border-[var(--border-subtle)] px-[14px] py-[10px] flex items-center gap-3">
+              <div className="p-1.5 bg-[var(--color-primary-50)] text-[var(--color-primary-500)] rounded-lg shrink-0 flex items-center justify-center">
+                <FileIcon size={18} />
+              </div>
+              <div className="flex-1 min-w-0 flex flex-col gap-[2px]">
+                <h3 className="font-medium text-sm text-[var(--text-primary)] truncate leading-tight">
+                  {file.name}
+                </h3>
+                <p className="text-[11px] text-[var(--text-secondary)] leading-tight">
+                  {formatSize(file.size)} &middot; {numPages} {numPages === 1 ? 'page' : 'pages'}
+                </p>
               </div>
               <button 
                 onClick={onFileReplace}
-                className="shrink-0 p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] rounded-lg transition-colors"
+                className="shrink-0 p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] rounded-md transition-colors flex items-center justify-center"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Config Panel */}
-            <div className="bg-[var(--surface-primary)] rounded-3xl shadow-sm border border-[var(--border-subtle)] overflow-hidden">
-              <div className="p-6 border-b border-[var(--border-subtle)] bg-[var(--surface-secondary)] flex items-center gap-3">
-                <Settings2 className="text-[var(--text-secondary)]" size={20} />
-                <h2 className="text-lg font-semibold text-[var(--text-primary)] capitalize">
+            <div className="bg-[var(--surface-primary)] rounded-2xl shadow-sm border border-[var(--border-subtle)] overflow-hidden">
+              <div className="py-2 px-[14px] border-b border-[var(--border-subtle)] bg-[var(--surface-secondary)] flex items-center gap-2">
+                <Settings2 className="text-[var(--text-secondary)]" size={16} />
+                <h2 className="text-sm font-semibold text-[var(--text-primary)] capitalize">
                   Configure {toolName}
                 </h2>
               </div>
 
-              <div className="p-5 md:p-6 flex flex-col gap-5">
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                    Custom Name (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. My PDF"
-                    value={namingSettings.filename}
-                    onChange={(e) =>
-                      setNamingSettings((s) => ({
-                        ...s,
-                        filename: e.target.value,
-                      }))
-                    }
-                    className="w-[100%] max-w-sm bg-[var(--surface-primary)] border border-[var(--border-subtle)] rounded-xl px-4 py-2.5 outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] font-medium placeholder:text-[var(--text-tertiary)]"
-                  />
-                  <p className="mt-1 text-xs text-[var(--text-secondary)]">
-                    Leave blank to use original name
-                  </p>
+              <div className="px-[14px] py-[10px] flex flex-col gap-2">
+                <div className={`grid grid-cols-1 ${isPageTool ? 'sm:grid-cols-[2fr_1fr]' : ''} gap-2`}>
+                  <div>
+                    <label className="block text-[11px] font-medium text-[var(--text-secondary)] mb-[2px]">
+                      Custom Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Leave blank to use original name"
+                      value={namingSettings.filename}
+                      onChange={(e) =>
+                        setNamingSettings((s) => ({
+                          ...s,
+                          filename: e.target.value,
+                        }))
+                      }
+                      className="w-full bg-[var(--surface-primary)] border border-[var(--border-subtle)] rounded-lg px-3 py-1.5 outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] text-sm font-medium placeholder:text-[var(--text-tertiary)]"
+                    />
+                  </div>
+
+                  {isPageTool && (
+                    <div>
+                      <label className="block text-[11px] font-medium text-[var(--text-secondary)] mb-[2px]">
+                        {activeTool === 'rearrange' ? 'Page Order' : 'Selected Pages'}
+                      </label>
+                      <input
+                        type="text"
+                        placeholder={activeTool === 'rearrange' ? '1, 2, 3' : '1-5, 8, 11-13'}
+                        value={pageRangeStr}
+                        onChange={(e) => handleRangeInputChange(e.target.value)}
+                        className="w-full bg-[var(--surface-secondary)] border border-[var(--border-subtle)] rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] transition-all"
+                      />
+                      {activeTool !== 'rearrange' && (
+                        <div className="flex justify-end items-center text-[11px] text-[var(--text-secondary)] mt-1">
+                          <span className="font-semibold text-[var(--color-primary-600)]">
+                            {selectedPages.size} selected
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {activeTool === 'compress' && (
-                  <>
+                  <div className="flex flex-col gap-2 mt-1">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                      <label className="block text-[11px] font-medium text-[var(--text-secondary)] mb-[2px]">
                         Compression Quality
                       </label>
-                      <div className="flex bg-[var(--surface-secondary)] border border-[var(--border-subtle)] rounded-xl p-1 relative">
+                      <div className="flex bg-[var(--surface-secondary)] border border-[var(--border-subtle)] rounded-lg p-1 relative">
                         {['high_quality', 'balanced', 'maximum'].map((lvl) => (
                           <button
                             key={lvl}
                             onClick={() => setCompressionLevel(lvl)}
-                            className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-lg capitalize transition-all duration-200 z-10 ${
+                            className={`flex-1 py-1 px-2 text-[11px] font-semibold rounded-md capitalize transition-all duration-200 z-10 ${
                               compressionLevel === lvl 
                                 ? 'bg-[var(--color-primary-500)] text-white shadow-sm' 
                                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-primary)]'
@@ -388,60 +407,37 @@ export function UnifiedWorkspace({
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                      <label className="block text-[11px] font-medium text-[var(--text-secondary)] mb-[2px]">
                         Target File Size
                       </label>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1">
                         {['none', '1024', '500', '200', '100', '50', 'custom'].map((size) => (
                           <button
                             key={size}
                             onClick={() => setTargetKB(size)}
-                            className={`px-5 py-2 rounded-xl text-sm font-semibold border transition-all ${
+                            className={`px-2 py-1 rounded-lg text-[11px] font-semibold border transition-all ${
                               targetKB === size 
                                 ? 'bg-[var(--color-primary-500)] border-[var(--color-primary-500)] text-white shadow-sm shadow-[var(--color-primary-500)]/20' 
                                 : 'bg-[var(--surface-primary)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--color-primary-300)]'
                             }`}
                           >
-                            {size === 'none' ? 'No Target' : size === 'custom' ? 'Custom' : `${size} KB`}
+                            {size === 'none' ? 'None' : size === 'custom' ? 'Custom' : `${size}KB`}
                           </button>
                         ))}
                       </div>
                       
                       {targetKB === 'custom' && (
-                        <div className="mt-3 animate-in fade-in slide-in-from-top-2 flex items-center gap-3">
+                        <div className="mt-1.5 animate-in fade-in slide-in-from-top-2 flex items-center gap-2">
                           <input
                             type="number"
-                            placeholder="e.g. 150"
+                            placeholder="150"
                             value={customKB || ''}
                             onChange={(e) => setCustomKB(Number(e.target.value))}
-                            className="w-[140px] bg-[var(--surface-primary)] border border-[var(--border-subtle)] rounded-xl px-4 py-2.5 outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] font-medium"
+                            className="w-[90px] bg-[var(--surface-primary)] border border-[var(--border-subtle)] rounded-lg px-2 py-1 outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] text-[11px] font-medium"
                             min="1"
                           />
-                          <span className="text-[var(--text-secondary)] text-sm font-medium">KB</span>
+                          <span className="text-[var(--text-secondary)] text-[11px] font-medium">KB</span>
                         </div>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                {isPageTool && (
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                      {activeTool === 'rearrange' ? 'Page Order' : 'Selected Pages'}
-                    </label>
-                    <input
-                      type="text"
-                      placeholder={activeTool === 'rearrange' ? '1, 2, 3...' : '1-5, 8, 11-13'}
-                      value={pageRangeStr}
-                      onChange={(e) => handleRangeInputChange(e.target.value)}
-                      className="w-full bg-[var(--surface-secondary)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-base outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] transition-all"
-                    />
-                    <div className="flex justify-between items-center text-xs text-[var(--text-secondary)] mt-1.5">
-                      <span>{activeTool === 'rearrange' ? 'Comma separated.' : 'Use commas and dashes.'}</span>
-                      {activeTool !== 'rearrange' && (
-                        <span className="font-semibold text-[var(--color-primary-600)]">
-                          {selectedPages.size} selected
-                        </span>
                       )}
                     </div>
                   </div>
@@ -478,7 +474,7 @@ export function UnifiedWorkspace({
               )}
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-1">
               <Button
                 variant="primary"
                 size="lg"
