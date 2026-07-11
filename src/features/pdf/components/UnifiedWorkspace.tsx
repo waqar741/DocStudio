@@ -23,7 +23,6 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 
 import { UploadZone, Button } from '@/components/ui'
-import type { PdfTool } from './LeftSidebar'
 import {
   CheckCircle2,
   Download,
@@ -36,6 +35,26 @@ import {
   Settings2,
 } from 'lucide-react'
 import { useSettingsStore } from '@/store/settingsStore'
+
+export type PdfTool =
+  | 'compress'
+  | 'split'
+  | 'rotate'
+  | 'rearrange'
+  | 'delete'
+  | 'extract'
+  | 'insert_blank'
+  | null
+
+export const PDF_TOOLS = [
+  { id: 'compress', label: 'Compress PDF' },
+  { id: 'split', label: 'Split PDF' },
+  { id: 'rotate', label: 'Rotate Pages' },
+  { id: 'rearrange', label: 'Rearrange Pages' },
+  { id: 'delete', label: 'Delete Pages' },
+  { id: 'extract', label: 'Extract Pages' },
+  { id: 'insert_blank', label: 'Insert Blank' },
+] as const
 
 // --- Utility Functions ---
 export function parsePageRanges(rangesStr: string, maxPages: number): Set<number> {
@@ -136,7 +155,8 @@ function SortableThumbnail({ id, pageIndex, isSelected, rotation, activeTool, on
   )
 }
 
-// --- Main Workspace ---
+import type { PdfNamingSettings } from '../PdfProcessor'
+
 export interface UnifiedWorkspaceProps {
   file: File | null
   activeTool: PdfTool
@@ -148,17 +168,22 @@ export interface UnifiedWorkspaceProps {
     timeMs: number
   } | null
 
+  namingSettings: PdfNamingSettings
+  setNamingSettings: React.Dispatch<React.SetStateAction<PdfNamingSettings>>
+
   onFileUpload: (file: File) => void
   onFileReplace: () => void
   onProceedToReview: () => void
   onProcess: (config: any) => void
   onDownload: () => void
   onStartNew: () => void
+  onToolSelect: (tool: PdfTool) => void
 }
 
 export function UnifiedWorkspace({
   file, activeTool, step, isProcessing, processingStats,
-  onFileUpload, onFileReplace, onProceedToReview, onProcess, onDownload, onStartNew,
+  namingSettings, setNamingSettings,
+  onFileUpload, onFileReplace, onProceedToReview, onProcess, onDownload, onStartNew
 }: UnifiedWorkspaceProps) {
   const [numPages, setNumPages] = useState<number>(0)
   const fileUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file])
@@ -257,13 +282,13 @@ export function UnifiedWorkspace({
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-y-auto bg-[var(--surface-secondary)]">
-      <div className="max-w-4xl mx-auto w-full p-4 md:p-8 flex flex-col gap-6 md:gap-8">
+      <div className={`mx-auto w-full flex flex-col flex-1 min-h-0 ${step === 2 ? 'p-4 md:p-6 max-w-7xl' : 'p-6 md:p-8 max-w-5xl'}`}>
         
         {/* Step 1: Upload */}
         {step === 1 && (
-          <div className="flex flex-col items-center justify-center pt-8 md:pt-20">
+          <div className="flex flex-col items-center justify-center pt-8 md:pt-16 animate-in fade-in zoom-in-95 duration-500">
             <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-3 capitalize tracking-tight text-center">
-              {toolName}
+              PDF Tools
             </h1>
             <p className="text-[var(--text-secondary)] mb-8 text-center text-sm md:text-base">
               Securely process your documents locally in your browser.
@@ -283,7 +308,7 @@ export function UnifiedWorkspace({
 
         {/* Step 2: Configure */}
         {step === 2 && file && (
-          <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
             
             {/* File Info Bar */}
             <div className="bg-[var(--surface-primary)] rounded-2xl shadow-sm border border-[var(--border-subtle)] p-4 flex items-center justify-between">
@@ -317,88 +342,111 @@ export function UnifiedWorkspace({
                 </h2>
               </div>
 
-              {activeTool === 'compress' && (
-                <div className="p-6 md:p-8 flex flex-col gap-8">
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-3">
-                      Compression Quality
-                    </label>
-                    <div className="flex bg-[var(--surface-secondary)] border border-[var(--border-subtle)] rounded-xl p-1 relative">
-                      {['high_quality', 'balanced', 'maximum'].map((lvl) => (
-                        <button
-                          key={lvl}
-                          onClick={() => setCompressionLevel(lvl)}
-                          className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-lg capitalize transition-all duration-200 z-10 ${
-                            compressionLevel === lvl 
-                              ? 'bg-[var(--color-primary-500)] text-white shadow-sm' 
-                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-primary)]'
-                          }`}
-                        >
-                          {lvl.replace('_', ' ')}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-3">
-                      Target File Size
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {['none', '1024', '500', '200', '100', '50', 'custom'].map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => setTargetKB(size)}
-                          className={`px-5 py-2 rounded-xl text-sm font-semibold border transition-all ${
-                            targetKB === size 
-                              ? 'bg-[var(--color-primary-500)] border-[var(--color-primary-500)] text-white shadow-sm shadow-[var(--color-primary-500)]/20' 
-                              : 'bg-[var(--surface-primary)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--color-primary-300)]'
-                          }`}
-                        >
-                          {size === 'none' ? 'No Target' : size === 'custom' ? 'Custom' : `${size} KB`}
-                        </button>
-                      ))}
-                    </div>
-                    
-                    {targetKB === 'custom' && (
-                      <div className="mt-4 animate-in fade-in slide-in-from-top-2 flex items-center gap-3">
-                        <input
-                          type="number"
-                          placeholder="e.g. 150"
-                          value={customKB || ''}
-                          onChange={(e) => setCustomKB(Number(e.target.value))}
-                          className="w-[140px] bg-[var(--surface-primary)] border border-[var(--border-subtle)] rounded-xl px-4 py-2.5 outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] font-medium"
-                          min="1"
-                        />
-                        <span className="text-[var(--text-secondary)] text-sm font-medium">KB</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {isPageTool && (
-                <div className="p-6 md:p-8">
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-3">
-                    {activeTool === 'rearrange' ? 'Page Order' : 'Selected Pages'}
+              <div className="p-5 md:p-6 flex flex-col gap-5">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    Custom Name (Optional)
                   </label>
                   <input
                     type="text"
-                    placeholder={activeTool === 'rearrange' ? '1, 2, 3...' : '1-5, 8, 11-13'}
-                    value={pageRangeStr}
-                    onChange={(e) => handleRangeInputChange(e.target.value)}
-                    className="w-full bg-[var(--surface-secondary)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-base outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] transition-all"
+                    placeholder="e.g. My PDF"
+                    value={namingSettings.filename}
+                    onChange={(e) =>
+                      setNamingSettings((s) => ({
+                        ...s,
+                        filename: e.target.value,
+                      }))
+                    }
+                    className="w-[100%] max-w-sm bg-[var(--surface-primary)] border border-[var(--border-subtle)] rounded-xl px-4 py-2.5 outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] font-medium placeholder:text-[var(--text-tertiary)]"
                   />
-                  <div className="flex justify-between items-center text-xs text-[var(--text-secondary)] mt-2">
-                    <span>{activeTool === 'rearrange' ? 'Comma separated.' : 'Use commas and dashes.'}</span>
-                    {activeTool !== 'rearrange' && (
-                      <span className="font-semibold text-[var(--color-primary-600)]">
-                        {selectedPages.size} selected
-                      </span>
-                    )}
-                  </div>
+                  <p className="mt-1 text-xs text-[var(--text-secondary)]">
+                    Leave blank to use original name
+                  </p>
                 </div>
-              )}
+
+                {activeTool === 'compress' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                        Compression Quality
+                      </label>
+                      <div className="flex bg-[var(--surface-secondary)] border border-[var(--border-subtle)] rounded-xl p-1 relative">
+                        {['high_quality', 'balanced', 'maximum'].map((lvl) => (
+                          <button
+                            key={lvl}
+                            onClick={() => setCompressionLevel(lvl)}
+                            className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-lg capitalize transition-all duration-200 z-10 ${
+                              compressionLevel === lvl 
+                                ? 'bg-[var(--color-primary-500)] text-white shadow-sm' 
+                                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-primary)]'
+                            }`}
+                          >
+                            {lvl.replace('_', ' ')}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                        Target File Size
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {['none', '1024', '500', '200', '100', '50', 'custom'].map((size) => (
+                          <button
+                            key={size}
+                            onClick={() => setTargetKB(size)}
+                            className={`px-5 py-2 rounded-xl text-sm font-semibold border transition-all ${
+                              targetKB === size 
+                                ? 'bg-[var(--color-primary-500)] border-[var(--color-primary-500)] text-white shadow-sm shadow-[var(--color-primary-500)]/20' 
+                                : 'bg-[var(--surface-primary)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--color-primary-300)]'
+                            }`}
+                          >
+                            {size === 'none' ? 'No Target' : size === 'custom' ? 'Custom' : `${size} KB`}
+                          </button>
+                        ))}
+                      </div>
+                      
+                      {targetKB === 'custom' && (
+                        <div className="mt-3 animate-in fade-in slide-in-from-top-2 flex items-center gap-3">
+                          <input
+                            type="number"
+                            placeholder="e.g. 150"
+                            value={customKB || ''}
+                            onChange={(e) => setCustomKB(Number(e.target.value))}
+                            className="w-[140px] bg-[var(--surface-primary)] border border-[var(--border-subtle)] rounded-xl px-4 py-2.5 outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] font-medium"
+                            min="1"
+                          />
+                          <span className="text-[var(--text-secondary)] text-sm font-medium">KB</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {isPageTool && (
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                      {activeTool === 'rearrange' ? 'Page Order' : 'Selected Pages'}
+                    </label>
+                    <input
+                      type="text"
+                      placeholder={activeTool === 'rearrange' ? '1, 2, 3...' : '1-5, 8, 11-13'}
+                      value={pageRangeStr}
+                      onChange={(e) => handleRangeInputChange(e.target.value)}
+                      className="w-full bg-[var(--surface-secondary)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-base outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)] text-[var(--text-primary)] transition-all"
+                    />
+                    <div className="flex justify-between items-center text-xs text-[var(--text-secondary)] mt-1.5">
+                      <span>{activeTool === 'rearrange' ? 'Comma separated.' : 'Use commas and dashes.'}</span>
+                      {activeTool !== 'rearrange' && (
+                        <span className="font-semibold text-[var(--color-primary-600)]">
+                          {selectedPages.size} selected
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {isPageTool && (
                 <div className="p-6 bg-[var(--surface-secondary)] border-t border-[var(--border-subtle)] min-h-[300px] max-h-[500px] overflow-y-auto custom-scrollbar">

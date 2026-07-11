@@ -50,6 +50,12 @@ export function ImageProcessor() {
   // Shared state
   const [file, setFile] = useState<File | null>(null)
 
+  useEffect(() => {
+    if (step > 1 && !file) {
+      setStep(1, true)
+    }
+  }, [step, file])
+
   // Crop state
   const [pixelCrop, setPixelCrop] = useState<Area | null>(null)
 
@@ -131,15 +137,32 @@ export function ImageProcessor() {
     const startTime = Date.now()
 
     try {
-      const { blob, filename } = await processImageBackend(
+      const { blob } = await processImageBackend(
         file,
         currentCropArea.width > 0 ? currentCropArea : null,
         outputSettings,
         namingSettings,
       )
 
+      let finalName = namingSettings.filename?.trim()
+      if (!finalName) {
+        const firstFile = file.name
+        const nameWithoutExt = firstFile.substring(0, firstFile.lastIndexOf('.')) || firstFile
+        const ext = outputSettings.format || 'jpg'
+        let suffix = '_processed'
+        if (namingSettings.documentType && namingSettings.documentType !== 'Document') {
+           suffix = `_${namingSettings.documentType.toLowerCase().replace(/\s+/g, '_')}`
+        }
+        finalName = `${nameWithoutExt}${suffix}.${ext}`
+      } else {
+        const ext = outputSettings.format || 'jpg'
+        if (!finalName.toLowerCase().endsWith('.' + ext)) {
+          finalName += '.' + ext
+        }
+      }
+
       setProcessedBlob(blob)
-      setGeneratedFilename(filename)
+      setGeneratedFilename(finalName)
 
       setProcessingStats({
         originalSize: file.size,

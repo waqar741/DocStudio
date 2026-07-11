@@ -1,12 +1,10 @@
 import type {
   MergeSettings,
-  MergeNamingSettings,
 } from '../components/MergeProcessor'
 
 export async function mergeDocumentsBackend(
   files: File[],
   settings: MergeSettings,
-  naming: MergeNamingSettings,
 ): Promise<{ blob: Blob; filename: string }> {
   const formData = new FormData()
 
@@ -22,10 +20,7 @@ export async function mergeDocumentsBackend(
   formData.append('output_format', settings.outputFormat)
   formData.append('image_layout', settings.imageLayout)
 
-  // Append naming
-  formData.append('relationship', naming.relationship)
-  formData.append('document_type', naming.documentType || 'Merged')
-  formData.append('suffix', naming.suffix || '')
+  // We don't append naming settings here anymore since frontend handles the naming
 
   const baseUrl = import.meta.env.VITE_API_URL || ''
   const response = await fetch(`${baseUrl}/api/merge`, {

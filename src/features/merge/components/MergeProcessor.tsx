@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { UnifiedMergeWorkspace } from './UnifiedMergeWorkspace'
 import { mergeDocumentsBackend } from '../api/mergeApi'
@@ -14,9 +14,7 @@ export interface MergeSettings {
 }
 
 export interface MergeNamingSettings {
-  relationship: string
-  documentType: string
-  suffix: string
+  filename: string
 }
 
 export function MergeProcessor() {
@@ -32,6 +30,12 @@ export function MergeProcessor() {
     setSearchParams({ step: newStep.toString() }, { replace })
   }
 
+  useEffect(() => {
+    if (step > 1 && files.length === 0) {
+      setStep(1, true)
+    }
+  }, [step, files.length])
+
   const [settings, setSettings] = useState<MergeSettings>({
     pageSize: 'A4',
     orientation: 'portrait',
@@ -41,9 +45,7 @@ export function MergeProcessor() {
   })
 
   const [namingSettings, setNamingSettings] = useState<MergeNamingSettings>({
-    relationship: 'Self',
-    documentType: 'Merged',
-    suffix: '',
+    filename: '',
   })
 
   // Processing State
@@ -91,13 +93,26 @@ export function MergeProcessor() {
     setIsProcessing(true)
 
     try {
-      const { blob, filename } = await mergeDocumentsBackend(
+      const { blob } = await mergeDocumentsBackend(
         files,
-        settings,
-        namingSettings,
+        settings
       )
+      
+      let finalName = namingSettings.filename?.trim()
+      if (!finalName) {
+        const firstFile = files[0]?.name || 'document'
+        const nameWithoutExt = firstFile.substring(0, firstFile.lastIndexOf('.')) || firstFile
+        const ext = settings.outputFormat === 'image' ? 'jpg' : 'pdf'
+        finalName = `${nameWithoutExt}_merged.${ext}`
+      } else {
+        const ext = settings.outputFormat === 'image' ? '.jpg' : '.pdf'
+        if (!finalName.toLowerCase().endsWith(ext)) {
+          finalName += ext
+        }
+      }
+
       setProcessedBlob(blob)
-      setGeneratedFilename(filename)
+      setGeneratedFilename(finalName)
       setStep(3)
       addToast('Success', 'Documents merged successfully!', 'success')
     } catch (error: any) {
@@ -138,8 +153,8 @@ export function MergeProcessor() {
         generatedFilename={generatedFilename}
         settings={settings}
         setSettings={setSettings}
-        namingSettings={namingSettings}
-        setNamingSettings={setNamingSettings}
+        filename={namingSettings.filename}
+        onFilenameChange={(name: string) => setNamingSettings({ filename: name })}
         onFilesAdded={handleFilesAdded}
         onFilesReordered={handleFilesReordered}
         onFileRemoved={handleFileRemoved}

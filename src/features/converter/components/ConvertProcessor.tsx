@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { UnifiedConvertWorkspace } from './UnifiedConvertWorkspace'
 import { convertDocumentsBackend } from '../api/convertApi'
@@ -8,6 +8,10 @@ import { useSettingsStore } from '@/store/settingsStore'
 
 export interface ConvertSettings {
   targetFormat: 'pdf' | 'jpg' | 'png' | 'webp'
+}
+
+export interface ConvertNamingSettings {
+  filename: string
 }
 
 export function ConvertProcessor() {
@@ -23,10 +27,20 @@ export function ConvertProcessor() {
     setSearchParams({ step: newStep.toString() }, { replace })
   }
 
+  useEffect(() => {
+    if (step > 1 && files.length === 0) {
+      setStep(1, true)
+    }
+  }, [step, files.length])
+
   const { defaultImageFormat } = useSettingsStore()
 
   const [settings, setSettings] = useState<ConvertSettings>({
     targetFormat: defaultImageFormat,
+  })
+
+  const [namingSettings, setNamingSettings] = useState<ConvertNamingSettings>({
+    filename: '',
   })
 
   const [isProcessing, setIsProcessing] = useState(false)
@@ -73,12 +87,28 @@ export function ConvertProcessor() {
     setIsProcessing(true)
 
     try {
-      const { blob, filename } = await convertDocumentsBackend(
+      const { blob } = await convertDocumentsBackend(
         files,
         settings.targetFormat,
       )
+
+      let finalName = namingSettings.filename?.trim()
+      if (!finalName) {
+        const firstFile = files[0]?.name || 'document'
+        const nameWithoutExt = firstFile.substring(0, firstFile.lastIndexOf('.')) || firstFile
+        const ext = blob.type === 'application/zip' || blob.type === 'application/x-zip-compressed' 
+          ? 'zip' 
+          : settings.targetFormat
+        finalName = `${nameWithoutExt}_converted.${ext}`
+      } else {
+        const ext = blob.type === 'application/zip' || blob.type === 'application/x-zip-compressed' ? 'zip' : settings.targetFormat
+        if (!finalName.toLowerCase().endsWith('.' + ext)) {
+          finalName += '.' + ext
+        }
+      }
+
       setProcessedBlob(blob)
-      setGeneratedFilename(filename)
+      setGeneratedFilename(finalName)
       setStep(3)
       addToast('Success', 'Files converted successfully!', 'success')
     } catch (error: any) {
@@ -115,6 +145,8 @@ export function ConvertProcessor() {
         generatedFilename={generatedFilename}
         settings={settings}
         setSettings={setSettings}
+        namingSettings={namingSettings}
+        setNamingSettings={setNamingSettings}
         onFilesAdded={handleFilesAdded}
         onFilesReordered={handleFilesReordered}
         onFileRemoved={handleFileRemoved}

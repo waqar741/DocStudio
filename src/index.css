@@ -133,6 +133,12 @@ body {
   border-radius: var(--radius-sm);
 }
 
+/* ─── Select Options Dark Mode Fix ─── */
+select option {
+  background-color: var(--surface-primary);
+  color: var(--text-primary);
+}
+
 /* ─── Scrollbar Styling ─── */
 ::-webkit-scrollbar {
   width: 6px;

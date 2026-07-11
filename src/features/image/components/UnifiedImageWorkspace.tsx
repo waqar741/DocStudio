@@ -66,9 +66,9 @@ export function UnifiedImageWorkspace({
   return (
     <div className="relative flex h-full flex-1 flex-col overflow-hidden bg-[var(--surface-bg)]">
       {/* Universal Step Indicator Header */}
-      <div className="shrink-0 border-b border-[var(--border-secondary)] bg-[var(--surface-primary)]/90 px-4 py-3 backdrop-blur-md lg:grid lg:grid-cols-3 lg:items-center lg:px-6 lg:py-2.5">
+      <div className="shrink-0 border-b border-[var(--border-secondary)] bg-[var(--surface-primary)]/90 px-4 py-3 backdrop-blur-md lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:px-6 lg:py-2.5">
         {/* Left: Back Button */}
-        <div className="flex justify-start lg:justify-start">
+        <div className="flex justify-start lg:justify-start w-full">
           {step > 1 && (
             <button
               onClick={onBack}
@@ -80,17 +80,17 @@ export function UnifiedImageWorkspace({
         </div>
 
         {/* Center: Stepper */}
-        <div className="mt-2 flex items-center justify-center gap-2 text-sm font-semibold lg:mt-0">
+        <div className="mt-2 flex items-center justify-center gap-2 text-sm font-semibold lg:mt-0 flex-nowrap whitespace-nowrap w-full">
           <span
             className={`px-3 py-1 rounded-full whitespace-nowrap ${step >= 1 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}
           >
-            1. Upload
+            1. Selection Page
           </span>
           <ArrowRight size={14} className="text-gray-400 shrink-0" />
           <span
             className={`px-3 py-1 rounded-full whitespace-nowrap ${step >= 2 ? 'bg-[var(--color-primary-500)] text-white' : 'bg-gray-200 text-gray-500'}`}
           >
-            2. Edit
+            2. Processing Page
           </span>
         </div>
 
@@ -731,7 +731,7 @@ export function UnifiedImageWorkspace({
 
                   <div className="space-y-3 text-xs">
                     <div className="rounded-lg border border-[var(--border-secondary)] bg-[var(--surface-secondary)] p-2.5">
-                      <p className="text-[10px] text-blue-600 dark:text-blue-400 font-bold mb-1 uppercase tracking-wide">
+                      <p className="text-[10px] text-[var(--color-primary-600)] font-bold mb-1 uppercase tracking-wide">
                         Filename
                       </p>
                       <p className="break-all font-mono leading-tight text-[var(--text-primary)]">

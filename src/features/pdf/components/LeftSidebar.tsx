@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Minimize2,
   Scissors,
@@ -6,18 +7,10 @@ import {
   Trash2,
   FileOutput,
   FilePlus2,
-  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
-
-export type PdfTool =
-  | 'compress'
-  | 'split'
-  | 'rotate'
-  | 'rearrange'
-  | 'delete'
-  | 'extract'
-  | 'insert_blank'
-  | null
+import type { PdfTool } from './UnifiedWorkspace'
 
 interface LeftSidebarProps {
   activeTool: PdfTool
@@ -25,6 +18,8 @@ interface LeftSidebarProps {
 }
 
 export function LeftSidebar({ activeTool, onToolSelect }: LeftSidebarProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
   const tools = [
     { id: 'compress', label: 'Compress PDF', icon: Minimize2 },
     { id: 'split', label: 'Split PDF', icon: Scissors },
@@ -35,63 +30,62 @@ export function LeftSidebar({ activeTool, onToolSelect }: LeftSidebarProps) {
     { id: 'insert_blank', label: 'Insert Blank', icon: FilePlus2 },
   ] as const
 
-  const activeToolData = tools.find(t => t.id === activeTool) || tools[0]
-  const ActiveIcon = activeToolData.icon
-
   return (
-    <>
-      {/* Mobile Tool Selector (Dropdown style) */}
-      <div className="md:hidden w-full bg-[var(--surface-primary)] border-b border-[var(--border-subtle)] p-4 relative">
-        <div className="relative">
-          <select
-            value={activeTool || 'compress'}
-            onChange={(e) => onToolSelect(e.target.value as PdfTool)}
-            className="w-full appearance-none bg-[var(--surface-secondary)] border border-[var(--border-subtle)] text-[var(--text-primary)] rounded-xl px-4 py-3 pl-11 text-sm font-semibold outline-none focus:border-[var(--color-primary-500)] focus:ring-1 focus:ring-[var(--color-primary-500)]"
-          >
-            {tools.map((tool) => (
-              <option key={tool.id} value={tool.id}>
-                {tool.label}
-              </option>
-            ))}
-          </select>
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-primary-500)]">
-            <ActiveIcon size={18} strokeWidth={2.5} />
-          </div>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-secondary)]">
-            <ChevronDown size={18} />
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Sidebar Container */}
-      <div className="hidden md:flex inset-y-0 left-0 z-10 w-[260px] bg-[var(--surface-primary)] border-r border-[var(--border-subtle)] flex-col h-full shrink-0">
-        <div className="h-16 px-6 border-b border-[var(--border-subtle)] flex items-center justify-between">
-          <h2 className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest">
+    <div
+      className={`bg-[var(--surface-primary)] border-r border-[var(--border-subtle)] flex flex-col transition-all duration-300 relative z-20 shadow-sm ${
+        isCollapsed ? 'w-16' : 'w-64'
+      } h-full overflow-hidden`}
+    >
+      <div className="p-4 border-b border-[var(--border-subtle)] flex items-center justify-between sticky top-0 bg-[var(--surface-primary)] z-10">
+        {!isCollapsed && (
+          <h2 className="font-bold text-sm text-[var(--text-secondary)] uppercase tracking-wider">
             PDF Tools
           </h2>
-        </div>
+        )}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={`p-1.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)] transition-colors ${
+            isCollapsed ? 'mx-auto' : ''
+          }`}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+        </button>
+      </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-1.5">
-          {tools.map((tool) => (
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1">
+        {tools.map((tool) => {
+          const Icon = tool.icon
+          const isActive = activeTool === tool.id
+
+          return (
             <button
               key={tool.id}
-              onClick={() => onToolSelect(tool.id)}
-              className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 group ${
-                activeTool === tool.id
-                  ? 'bg-[var(--color-primary-500)] text-white shadow-md shadow-blue-500/20'
+              onClick={() => onToolSelect(tool.id as PdfTool)}
+              title={isCollapsed ? tool.label : undefined}
+              className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-start'} px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${
+                isActive
+                  ? 'bg-[var(--color-primary-500)] text-white shadow-sm'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
-              <tool.icon
+              <Icon
                 size={18}
-                className={activeTool === tool.id ? 'text-white' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'}
-                strokeWidth={2.5}
+                className={`shrink-0 ${
+                  isActive
+                    ? 'text-white'
+                    : 'text-[var(--text-secondary)] group-hover:text-[var(--color-primary-500)]'
+                } transition-colors`}
               />
-              {tool.label}
+              {!isCollapsed && (
+                <span className="ml-3 text-sm font-medium whitespace-nowrap">
+                  {tool.label}
+                </span>
+              )}
             </button>
-          ))}
-        </div>
+          )
+        })}
       </div>
-    </>
+    </div>
   )
 }
